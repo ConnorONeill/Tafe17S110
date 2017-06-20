@@ -38,6 +38,8 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnModify = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
+            this.btnBack = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -129,11 +131,33 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
+            // btnBack
+            // 
+            this.btnBack.Location = new System.Drawing.Point(197, 248);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(75, 23);
+            this.btnBack.TabIndex = 10;
+            this.btnBack.Text = "Back";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Enabled = false;
+            this.btnDelete.Location = new System.Drawing.Point(12, 249);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnDelete.TabIndex = 11;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            // 
             // frmTerm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(284, 281);
+            this.Controls.Add(this.btnDelete);
+            this.Controls.Add(this.btnBack);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnModify);
             this.Controls.Add(this.btnAdd);
@@ -163,5 +187,7 @@
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnModify;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Button btnDelete;
     }
 }

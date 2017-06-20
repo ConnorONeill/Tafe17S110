@@ -22,7 +22,17 @@ namespace VendorMaintenance
 
         private void frmAddModifyTerm_load(object sender, EventArgs e)
         {
+            if (addTerm != true)
+            {
+                this.DisplayTermData();
+            }
+        }
 
+        private void DisplayTermData()
+        {
+            txtTID.Text = term.TermsID.ToString();
+            txtTDesc.Text = term.Description.ToString();
+            txtTDays.Text = term.DueDays.ToString();
         }
 
         private void btnAccept_Click(object sender, EventArgs e)
@@ -37,7 +47,7 @@ namespace VendorMaintenance
                 {
                     DataContext.payables.SubmitChanges();
                     this.DialogResult = DialogResult.OK;
-                    MessageBox.Show("Term " + Convert.ToString(term.DueDays) + " has been added to the Terms Table");
+                    MessageBox.Show("Term " + Convert.ToString(term.TermsID) + " has been added to the Terms Table");
                 }
                 catch (Exception ex)
                 {

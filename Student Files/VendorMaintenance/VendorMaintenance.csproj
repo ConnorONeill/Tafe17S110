@@ -73,6 +73,12 @@
     <Compile Include="frmAddModifyVendor.Designer.cs">
       <DependentUpon>frmAddModifyVendor.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmTerm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTerm.Designer.cs">
+      <DependentUpon>frmTerm.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmVendorMaintenance.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,6 +100,12 @@
     </None>
     <EmbeddedResource Include="frmAddModifyTerm.resx">
       <DependentUpon>frmAddModifyTerm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTerm.resx">
+      <DependentUpon>frmTerm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmVendorMaintenance.resx">
+      <DependentUpon>frmVendorMaintenance.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

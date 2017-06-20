@@ -28,6 +28,8 @@ namespace VendorMaintenance
                     where Terms.TermsID == Convert.ToInt32(txtTermID.Text)
                     select Terms).Single();
                 this.DisplayTerm();
+                btnModify.Enabled = true;
+                btnDelete.Enabled = true;
             }
             catch (InvalidOperationException)
             {
@@ -47,6 +49,8 @@ namespace VendorMaintenance
             txtTermID.Text = "";
             txtTermDesc.Text = "";
             txtDueDays.Text = "";
+            btnModify.Enabled = false;
+            btnDelete.Enabled = false;
         }
 
         private void DisplayTerm()
@@ -98,6 +102,38 @@ namespace VendorMaintenance
                 this.ClearControls();
             }
         }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            frmVendorMaintenance f = new frmVendorMaintenance();
+            this.Hide();
+            f.ShowDialog();
+            
+        }
+
+        /*private void btnDelete_Click(object sender, EventArgs e)
+        {
+            DialogResult result =
+                MessageBox.Show("Delete " + selectedTerm.TermsID + "?", 
+                "ConfirmDelete", MessageBoxButtons.YesNo, 
+                MessageBoxIcon.Question);
+            if(result==DialogResult.Yes)
+            {
+                try
+                {
+                    DataContext.payables.Terms.DeleteOnSubmit(selectedTerm);
+                    DataContext.payables.SubmitChanges();
+                    txtTermID.Text = "";
+                    this.ClearControls();
+                }
+                catch(ChangeConflictException)
+                {
+                    DataContext.GetCurrentValues();
+                    MessageBox.Show("Another user has updated that vendor.", 
+                        "Database Error");
+                    this.DisplayTerm();
+                }
+        }*/
 
 
     }

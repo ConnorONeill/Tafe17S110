@@ -50,10 +50,9 @@
             // 
             // txtTID
             // 
-            this.txtTID.Enabled = false;
             this.txtTID.Location = new System.Drawing.Point(12, 27);
             this.txtTID.Name = "txtTID";
-            this.txtTID.Size = new System.Drawing.Size(107, 20);
+            this.txtTID.Size = new System.Drawing.Size(260, 20);
             this.txtTID.TabIndex = 1;
             // 
             // label2
@@ -86,7 +85,7 @@
             // 
             this.txtTDays.Location = new System.Drawing.Point(12, 191);
             this.txtTDays.Name = "txtTDays";
-            this.txtTDays.Size = new System.Drawing.Size(100, 20);
+            this.txtTDays.Size = new System.Drawing.Size(260, 20);
             this.txtTDays.TabIndex = 5;
             // 
             // btnAccept
