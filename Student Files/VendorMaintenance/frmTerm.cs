@@ -79,7 +79,24 @@ namespace VendorMaintenance
 
         private void btnModify_Click(object sender, EventArgs e)
         {
+            frmAddModifyTerm f;
+            f = new frmAddModifyTerm();
 
+            f.addTerm = false;
+
+            f.term = selectedTerm;
+
+            DialogResult result = f.ShowDialog();
+            if (result == DialogResult.OK || result == DialogResult.Retry)
+            {
+                selectedTerm = f.term;
+                this.DisplayTerm();
+            }
+            else if (result == DialogResult.Abort)
+            {
+                txtTermID.Text="";
+                this.ClearControls();
+            }
         }
 
 

@@ -113,7 +113,7 @@
             // 
             this.btnModify.Location = new System.Drawing.Point(94, 219);
             this.btnModify.Name = "btnModify";
-            this.btnModify.Size = new System.Drawing.Size(75, 23);
+            this.btnModify.Size = new System.Drawing.Size(97, 23);
             this.btnModify.TabIndex = 8;
             this.btnModify.Text = "Modify";
             this.btnModify.UseVisualStyleBackColor = true;
@@ -121,7 +121,7 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(176, 219);
+            this.btnClear.Location = new System.Drawing.Point(197, 219);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(75, 23);
             this.btnClear.TabIndex = 9;

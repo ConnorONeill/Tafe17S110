@@ -27,21 +27,38 @@ namespace VendorMaintenance
 
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            term = new Term();
-            this.PutTermData(term);
-            DataContext.payables.Terms.InsertOnSubmit(term);
+            if (addTerm)
+            {
+                term = new Term();
+                this.PutTermData(term);
+                DataContext.payables.Terms.InsertOnSubmit(term);
 
-            try
-            {
-                DataContext.payables.SubmitChanges();
-                this.DialogResult = DialogResult.OK;
-                MessageBox.Show("Term " + Convert.ToString(term.DueDays) + " has been added to the Terms Table");
+                try
+                {
+                    DataContext.payables.SubmitChanges();
+                    this.DialogResult = DialogResult.OK;
+                    MessageBox.Show("Term " + Convert.ToString(term.DueDays) + " has been added to the Terms Table");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, ex.GetType().ToString());
+                }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message, ex.GetType().ToString());
+                this.PutTermData(term);
+                try
+                {
+                    DataContext.payables.SubmitChanges();
+                    this.DialogResult = DialogResult.OK;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, ex.GetType().ToString());
+                }
             }
         }
+
         private void PutTermData(Term term)
         {
             term.TermsID = Int32.Parse(txtTID.Text);
@@ -54,6 +71,11 @@ namespace VendorMaintenance
             txtTID.Text = "";
             txtTDesc.Text = "";
             txtTDays.Text = "";
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Hide();
         }
     }
 }
