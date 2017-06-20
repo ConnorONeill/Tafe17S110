@@ -37,7 +37,6 @@
             this.lblFirstZip = new System.Windows.Forms.Label();
             this.lblLastZip = new System.Windows.Forms.Label();
             this.btnAccept = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtCode
@@ -76,7 +75,7 @@
             this.lblCode.Size = new System.Drawing.Size(60, 13);
             this.lblCode.TabIndex = 4;
             this.lblCode.Text = "State Code";
-            this.lblCode.Click += new System.EventHandler(this.label1_Click);
+        
             // 
             // lblName
             // 
@@ -107,29 +106,19 @@
             // 
             // btnAccept
             // 
-            this.btnAccept.Location = new System.Drawing.Point(31, 145);
+            this.btnAccept.Location = new System.Drawing.Point(12, 145);
             this.btnAccept.Name = "btnAccept";
             this.btnAccept.Size = new System.Drawing.Size(75, 23);
             this.btnAccept.TabIndex = 8;
             this.btnAccept.Text = "Accept";
             this.btnAccept.UseVisualStyleBackColor = true;
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(124, 145);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 9;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.button1_Click);
+            this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
             // 
             // frmAddModifyState
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnAccept);
             this.Controls.Add(this.lblLastZip);
             this.Controls.Add(this.lblFirstZip);
@@ -141,7 +130,6 @@
             this.Controls.Add(this.txtCode);
             this.Name = "frmAddModifyState";
             this.Text = "frmAddModifyState";
-            this.Load += new System.EventHandler(this.frmAddModifyState_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -158,6 +146,5 @@
         private System.Windows.Forms.Label lblFirstZip;
         private System.Windows.Forms.Label lblLastZip;
         private System.Windows.Forms.Button btnAccept;
-        private System.Windows.Forms.Button btnCancel;
     }
 }
