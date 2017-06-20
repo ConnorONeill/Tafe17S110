@@ -61,6 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContext.cs" />
+    <Compile Include="frmAddModifyState.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAddModifyState.Designer.cs">
+      <DependentUpon>frmAddModifyState.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmAddModifyVendor.cs">
       <SubType>Form</SubType>
     </Compile>
