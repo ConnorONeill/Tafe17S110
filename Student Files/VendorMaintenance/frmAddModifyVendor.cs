@@ -19,7 +19,7 @@ namespace VendorMaintenance
 
         public bool addVendor;
         public Vendor vendor;
-
+        
         private void frmAddModifyVendor_Load(object sender, EventArgs e)
         {
             this.LoadComboBoxes();

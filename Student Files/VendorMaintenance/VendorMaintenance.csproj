@@ -92,6 +92,12 @@
     <None Include="Payables.dbml.layout">
       <DependentUpon>Payables.dbml</DependentUpon>
     </None>
+    <EmbeddedResource Include="frmAddModifyState.resx">
+      <DependentUpon>frmAddModifyState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAddModifyVendor.resx">
+      <DependentUpon>frmAddModifyVendor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
