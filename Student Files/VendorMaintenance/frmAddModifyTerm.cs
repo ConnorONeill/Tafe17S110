@@ -18,13 +18,9 @@ namespace VendorMaintenance
         }
 
         public Term term;
+        public bool addTerm;
 
         private void frmAddModifyTerm_load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
         {
 
         }
