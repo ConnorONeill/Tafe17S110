@@ -61,6 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContext.cs" />
+    <Compile Include="frmAddModifyTerm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAddModifyTerm.Designer.cs">
+      <DependentUpon>frmAddModifyTerm.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmAddModifyVendor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,6 +92,9 @@
     <None Include="Payables.dbml.layout">
       <DependentUpon>Payables.dbml</DependentUpon>
     </None>
+    <EmbeddedResource Include="frmAddModifyTerm.resx">
+      <DependentUpon>frmAddModifyTerm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
