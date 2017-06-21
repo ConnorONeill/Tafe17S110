@@ -1,0 +1,601 @@
+From adfa4eae6bc29404575931a682a8fb98356fd90a Mon Sep 17 00:00:00 2001
+From: Connor <iconnoroneill@gmail.com>
+Date: Wed, 21 Jun 2017 12:56:31 +0930
+Subject: [PATCH 15/17] Fixed errors with feat_state
+
+Signed-off-by: Connor <iconnoroneill@gmail.com>
+---
+ .../VendorMaintenance/frmAddModifyVendor.resx      | 120 +++++++++++++
+ .../VendorMaintenance/frmState.Designer.cs         | 186 +++++++++++++++++++++
+ Student Files/VendorMaintenance/frmState.cs        | 128 ++++++++++++++
+ Student Files/VendorMaintenance/frmState.resx      | 120 +++++++++++++
+ 4 files changed, 554 insertions(+)
+ create mode 100644 Student Files/VendorMaintenance/frmAddModifyVendor.resx
+ create mode 100644 Student Files/VendorMaintenance/frmState.Designer.cs
+ create mode 100644 Student Files/VendorMaintenance/frmState.cs
+ create mode 100644 Student Files/VendorMaintenance/frmState.resx
+
+diff --git a/Student Files/VendorMaintenance/frmAddModifyVendor.resx b/Student Files/VendorMaintenance/frmAddModifyVendor.resx
+new file mode 100644
+index 0000000..1af7de1
+--- /dev/null
++++ b/Student Files/VendorMaintenance/frmAddModifyVendor.resx	
+@@ -0,0 +1,120 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" use="required" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++</root>
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/frmState.Designer.cs b/Student Files/VendorMaintenance/frmState.Designer.cs
+new file mode 100644
+index 0000000..f34d058
+--- /dev/null
++++ b/Student Files/VendorMaintenance/frmState.Designer.cs	
+@@ -0,0 +1,186 @@
++﻿namespace VendorMaintenance
++{
++    partial class frmState
++    {
++        /// <summary>
++        /// Required designer variable.
++        /// </summary>
++        private System.ComponentModel.IContainer components = null;
++
++        /// <summary>
++        /// Clean up any resources being used.
++        /// </summary>
++        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
++        protected override void Dispose(bool disposing)
++        {
++            if (disposing && (components != null))
++            {
++                components.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++
++        #region Windows Form Designer generated code
++
++        /// <summary>
++        /// Required method for Designer support - do not modify
++        /// the contents of this method with the code editor.
++        /// </summary>
++        private void InitializeComponent()
++        {
++            this.lblCode = new System.Windows.Forms.Label();
++            this.lblName = new System.Windows.Forms.Label();
++            this.lblFirstZip = new System.Windows.Forms.Label();
++            this.lblLastZip = new System.Windows.Forms.Label();
++            this.txtCode = new System.Windows.Forms.TextBox();
++            this.txtName = new System.Windows.Forms.TextBox();
++            this.txtLastZip = new System.Windows.Forms.TextBox();
++            this.txtFirstZip = new System.Windows.Forms.TextBox();
++            this.btnAdd = new System.Windows.Forms.Button();
++            this.btnModify = new System.Windows.Forms.Button();
++            this.btnGetState = new System.Windows.Forms.Button();
++            this.btnClear = new System.Windows.Forms.Button();
++            this.SuspendLayout();
++            // 
++            // lblCode
++            // 
++            this.lblCode.AutoSize = true;
++            this.lblCode.Location = new System.Drawing.Point(27, 17);
++            this.lblCode.Name = "lblCode";
++            this.lblCode.Size = new System.Drawing.Size(60, 13);
++            this.lblCode.TabIndex = 0;
++            this.lblCode.Text = "State Code";
++            // 
++            // lblName
++            // 
++            this.lblName.AutoSize = true;
++            this.lblName.Location = new System.Drawing.Point(27, 48);
++            this.lblName.Name = "lblName";
++            this.lblName.Size = new System.Drawing.Size(63, 13);
++            this.lblName.TabIndex = 1;
++            this.lblName.Text = "State Name";
++            // 
++            // lblFirstZip
++            // 
++            this.lblFirstZip.AutoSize = true;
++            this.lblFirstZip.Location = new System.Drawing.Point(27, 83);
++            this.lblFirstZip.Name = "lblFirstZip";
++            this.lblFirstZip.Size = new System.Drawing.Size(72, 13);
++            this.lblFirstZip.TabIndex = 2;
++            this.lblFirstZip.Text = "First Zip Code";
++            // 
++            // lblLastZip
++            // 
++            this.lblLastZip.AutoSize = true;
++            this.lblLastZip.Location = new System.Drawing.Point(26, 115);
++            this.lblLastZip.Name = "lblLastZip";
++            this.lblLastZip.Size = new System.Drawing.Size(73, 13);
++            this.lblLastZip.TabIndex = 3;
++            this.lblLastZip.Text = "Last Zip Code";
++            // 
++            // txtCode
++            // 
++            this.txtCode.Location = new System.Drawing.Point(142, 17);
++            this.txtCode.Name = "txtCode";
++            this.txtCode.Size = new System.Drawing.Size(100, 20);
++            this.txtCode.TabIndex = 4;
++            // 
++            // txtName
++            // 
++            this.txtName.Location = new System.Drawing.Point(142, 48);
++            this.txtName.Name = "txtName";
++            this.txtName.Size = new System.Drawing.Size(100, 20);
++            this.txtName.TabIndex = 5;
++            // 
++            // txtLastZip
++            // 
++            this.txtLastZip.Location = new System.Drawing.Point(142, 112);
++            this.txtLastZip.Name = "txtLastZip";
++            this.txtLastZip.Size = new System.Drawing.Size(100, 20);
++            this.txtLastZip.TabIndex = 6;
++            // 
++            // txtFirstZip
++            // 
++            this.txtFirstZip.Location = new System.Drawing.Point(142, 83);
++            this.txtFirstZip.Name = "txtFirstZip";
++            this.txtFirstZip.Size = new System.Drawing.Size(100, 20);
++            this.txtFirstZip.TabIndex = 7;
++            // 
++            // btnAdd
++            // 
++            this.btnAdd.Location = new System.Drawing.Point(15, 162);
++            this.btnAdd.Name = "btnAdd";
++            this.btnAdd.Size = new System.Drawing.Size(75, 23);
++            this.btnAdd.TabIndex = 8;
++            this.btnAdd.Text = "Add";
++            this.btnAdd.UseVisualStyleBackColor = true;
++            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
++            // 
++            // btnModify
++            // 
++            this.btnModify.Location = new System.Drawing.Point(112, 162);
++            this.btnModify.Name = "btnModify";
++            this.btnModify.Size = new System.Drawing.Size(75, 23);
++            this.btnModify.TabIndex = 9;
++            this.btnModify.Text = "Modify";
++            this.btnModify.UseVisualStyleBackColor = true;
++       
++            // 
++            // btnGetState
++            // 
++            this.btnGetState.Location = new System.Drawing.Point(252, 17);
++            this.btnGetState.Name = "btnGetState";
++            this.btnGetState.Size = new System.Drawing.Size(75, 23);
++            this.btnGetState.TabIndex = 10;
++            this.btnGetState.Text = "Get State";
++            this.btnGetState.UseVisualStyleBackColor = true;
++            // 
++            // btnClear
++            // 
++            this.btnClear.Location = new System.Drawing.Point(213, 162);
++            this.btnClear.Name = "btnClear";
++            this.btnClear.Size = new System.Drawing.Size(75, 23);
++            this.btnClear.TabIndex = 11;
++            this.btnClear.Text = "Clear";
++            this.btnClear.UseVisualStyleBackColor = true;
++            // 
++            // frmState
++            // 
++            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
++            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
++            this.ClientSize = new System.Drawing.Size(339, 261);
++            this.Controls.Add(this.btnClear);
++            this.Controls.Add(this.btnGetState);
++            this.Controls.Add(this.btnModify);
++            this.Controls.Add(this.btnAdd);
++            this.Controls.Add(this.txtFirstZip);
++            this.Controls.Add(this.txtLastZip);
++            this.Controls.Add(this.txtName);
++            this.Controls.Add(this.txtCode);
++            this.Controls.Add(this.lblLastZip);
++            this.Controls.Add(this.lblFirstZip);
++            this.Controls.Add(this.lblName);
++            this.Controls.Add(this.lblCode);
++            this.Name = "frmState";
++            this.Text = "frmState";
++            this.ResumeLayout(false);
++            this.PerformLayout();
++
++        }
++
++        #endregion
++
++        private System.Windows.Forms.Label lblCode;
++        private System.Windows.Forms.Label lblName;
++        private System.Windows.Forms.Label lblFirstZip;
++        private System.Windows.Forms.Label lblLastZip;
++        private System.Windows.Forms.TextBox txtCode;
++        private System.Windows.Forms.TextBox txtName;
++        private System.Windows.Forms.TextBox txtLastZip;
++        private System.Windows.Forms.TextBox txtFirstZip;
++        private System.Windows.Forms.Button btnAdd;
++        private System.Windows.Forms.Button btnModify;
++        private System.Windows.Forms.Button btnGetState;
++        private System.Windows.Forms.Button btnClear;
++    }
++}
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/frmState.cs b/Student Files/VendorMaintenance/frmState.cs
+new file mode 100644
+index 0000000..c3f5dc6
+--- /dev/null
++++ b/Student Files/VendorMaintenance/frmState.cs	
+@@ -0,0 +1,128 @@
++﻿using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Data;
++using System.Drawing;
++using System.Linq;
++using System.Text;
++using System.Windows.Forms;
++
++namespace VendorMaintenance
++{
++    public partial class frmState : Form
++    {
++        public frmState()
++        {
++            InitializeComponent();
++        }
++
++        State selectedState;
++
++        // Form load 
++        private void frmState_Load(object sender, EventArgs e)
++        {
++        }
++
++        // Clear data on screen
++        private void btnClear_Click(object sender, EventArgs e)
++        {
++            txtCode.Text = "";
++            txtName.Text = "";
++            txtFirstZip.Text = "";
++            txtLastZip.Text = "";
++        }
++
++        // Codes for the add button which is to display the frmAddModifyGLAccount form
++        private void btnAdd_Click(object sender, EventArgs e)
++        {
++            // Generater a new form instance
++            frmAddModifyState f;
++            f = new frmAddModifyState();
++
++            // assignment the addGLAccount global boolean to be true
++            f.addState = true;
++
++            DialogResult result = f.ShowDialog();
++            if (result == DialogResult.OK)
++            {
++                selectedState = f.state;
++                txtCode.Text = selectedState.StateCode.ToString();
++                this.DisplayState();
++            }
++        }
++
++
++        // Codes for the modify button which is to display the frmAddModifyGLAccount form
++        private void btnModify_Click(object sender, EventArgs e)
++        {
++            // Generater a new form instance
++            frmAddModifyState f;
++            f = new frmAddModifyState();
++
++            f.addState = false;
++
++            f.state = selectedState;
++
++            DialogResult result = f.ShowDialog();
++            if (result == DialogResult.OK || result == DialogResult.Retry)
++            {
++                selectedState = f.state;
++                this.DisplayState();
++            }
++            else if (result == DialogResult.Abort)
++            {
++                txtCode.Text = "";
++                this.ClearControls();
++            }
++        }
++
++        // Get GLAccount from table
++        private void btnGetState_Click(object sender, EventArgs e)
++        {
++            try
++            {
++                selectedState =
++                    (from state in DataContext.payables.States
++                     where state.StateCode == txtCode.Text
++                     select state).Single();
++                this.DisplayState();
++            }
++            catch (InvalidOperationException)
++            {
++                MessageBox.Show("No State found with this No. " +
++                    "Please try again.", "this State Not Found");
++                this.ClearControls();
++                txtCode.Focus();
++            }
++            catch (Exception ex)
++            {
++                MessageBox.Show(ex.Message, ex.GetType().ToString());
++            }
++        }
++
++
++        // Display GLAccount method
++        private void DisplayState()
++        {
++            txtCode.Text = selectedState.StateCode.ToString();
++            txtName.Text = selectedState.StateName.ToString();
++            txtFirstZip.Text = selectedState.FirstZipCode.ToString();
++            txtFirstZip.Text = selectedState.FirstZipCode.ToString();
++            //cmdModify.Enabled = true;
++            //cmdDelete.Enabled = true;
++        }
++
++        // Clear screen control method
++        private void ClearControls()
++        {
++            txtCode.Text = "";
++            txtName.Text = "";
++            txtFirstZip.Text = "";
++            txtLastZip.Text = "";
++            //cmdModify.Enabled = false;
++            //cmdDelete.Enabled = false;
++        }
++
++
++    }
++}
+diff --git a/Student Files/VendorMaintenance/frmState.resx b/Student Files/VendorMaintenance/frmState.resx
+new file mode 100644
+index 0000000..1af7de1
+--- /dev/null
++++ b/Student Files/VendorMaintenance/frmState.resx	
+@@ -0,0 +1,120 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" use="required" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++</root>
+\ No newline at end of file
+-- 
+2.11.0.windows.1
+

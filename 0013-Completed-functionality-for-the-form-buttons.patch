@@ -1,0 +1,704 @@
+From 893546f3618c22ddc9de4cdd7ccaebecd155e93e Mon Sep 17 00:00:00 2001
+From: Takuma Wood-Cooper <Takuma.Wood-Cooper@outlook.com>
+Date: Tue, 20 Jun 2017 17:32:16 +0930
+Subject: [PATCH 13/17] Completed functionality for the form buttons Began
+ creation of Delete Term button, however ran into errors
+
+---
+ Student Files/VendorMaintenance/Payables.dbml      |  47 +++++++-
+ .../VendorMaintenance/Payables.dbml.layout         |  61 ++++++++++-
+ .../VendorMaintenance/VendorMaintenance.csproj     |  12 +++
+ .../VendorMaintenance/frmAddModifyTerm.Designer.cs |   5 +-
+ .../VendorMaintenance/frmAddModifyTerm.cs          |  12 ++-
+ .../VendorMaintenance/frmTerm.Designer.cs          |  28 ++++-
+ Student Files/VendorMaintenance/frmTerm.cs         |  36 +++++++
+ .../frmVendorMaintenance.Designer.cs               | 120 +++++++++++----------
+ .../VendorMaintenance/frmVendorMaintenance.cs      |  17 +++
+ 9 files changed, 270 insertions(+), 68 deletions(-)
+
+diff --git a/Student Files/VendorMaintenance/Payables.dbml b/Student Files/VendorMaintenance/Payables.dbml
+index 8074564..1e710e9 100644
+--- a/Student Files/VendorMaintenance/Payables.dbml	
++++ b/Student Files/VendorMaintenance/Payables.dbml	
+@@ -1,5 +1,4 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<Database Name="Payables" Class="PayablesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
++﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Payables" Class="PayablesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+   <Connection Mode="AppSettings" ConnectionString="Data Source=localhost\sqlexpress;Initial Catalog=Payables;Integrated Security=True" SettingsObjectName="VendorMaintenance.Properties.Settings" SettingsPropertyName="PayablesConnectionString" Provider="System.Data.SqlClient" />
+   <Table Name="dbo.Vendors" Member="Vendors">
+     <Type Name="Vendor">
+@@ -15,6 +14,8 @@
+       <Column Name="ContactFName" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+       <Column Name="DefaultTermsID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+       <Column Name="DefaultAccountNo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
++      <Association Name="Vendor_Invoice" Member="Invoices" ThisKey="VendorID" OtherKey="VendorID" Type="Invoice" />
++      <Association Name="Vendor_VendorsSummary" Member="VendorsSummary" ThisKey="VendorID" OtherKey="VendorID" Type="VendorsSummary" Cardinality="One" />
+       <Association Name="State_Vendor" Member="State1" ThisKey="State" OtherKey="StateCode" Type="State" IsForeignKey="true" />
+       <Association Name="Term_Vendor" Member="Term" ThisKey="DefaultTermsID" OtherKey="TermsID" Type="Term" IsForeignKey="true" />
+       <Association Name="GLAccount_Vendor" Member="GLAccount" ThisKey="DefaultAccountNo" OtherKey="AccountNo" Type="GLAccount" IsForeignKey="true" />
+@@ -35,6 +36,7 @@
+       <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+       <Column Name="DueDays" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+       <Association Name="Term_Vendor" Member="Vendors" ThisKey="TermsID" OtherKey="DefaultTermsID" Type="Vendor" />
++      <Association Name="Term_Invoice" Member="Invoices" ThisKey="TermsID" OtherKey="TermsID" Type="Invoice" />
+     </Type>
+   </Table>
+   <Table Name="dbo.GLAccounts" Member="GLAccounts">
+@@ -42,6 +44,47 @@
+       <Column Name="AccountNo" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+       <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+       <Association Name="GLAccount_Vendor" Member="Vendors" ThisKey="AccountNo" OtherKey="DefaultAccountNo" Type="Vendor" />
++      <Association Name="GLAccount_InvoiceLineItem" Member="InvoiceLineItems" ThisKey="AccountNo" OtherKey="AccountNo" Type="InvoiceLineItem" />
++    </Type>
++  </Table>
++  <Table Name="dbo.InvoiceLineItems" Member="InvoiceLineItems">
++    <Type Name="InvoiceLineItem">
++      <Column Name="InvoiceID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
++      <Column Name="InvoiceSequence" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
++      <Column Name="AccountNo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
++      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="Description" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
++      <Association Name="GLAccount_InvoiceLineItem" Member="GLAccount" ThisKey="AccountNo" OtherKey="AccountNo" Type="GLAccount" IsForeignKey="true" />
++      <Association Name="Invoice_InvoiceLineItem" Member="Invoice" ThisKey="InvoiceID" OtherKey="InvoiceID" Type="Invoice" IsForeignKey="true" />
++    </Type>
++  </Table>
++  <Table Name="dbo.Invoices" Member="Invoices">
++    <Type Name="Invoice">
++      <Column Name="InvoiceID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
++      <Column Name="VendorID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
++      <Column Name="InvoiceNumber" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
++      <Column Name="InvoiceDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
++      <Column Name="InvoiceTotal" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="PaymentTotal" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="CreditTotal" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="TermsID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
++      <Column Name="DueDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
++      <Column Name="PaymentDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
++      <Association Name="Invoice_InvoiceLineItem" Member="InvoiceLineItems" ThisKey="InvoiceID" OtherKey="InvoiceID" Type="InvoiceLineItem" />
++      <Association Name="Term_Invoice" Member="Term" ThisKey="TermsID" OtherKey="TermsID" Type="Term" IsForeignKey="true" />
++      <Association Name="Vendor_Invoice" Member="Vendor" ThisKey="VendorID" OtherKey="VendorID" Type="Vendor" IsForeignKey="true" />
++    </Type>
++  </Table>
++  <Table Name="dbo.VendorsSummary" Member="VendorsSummaries">
++    <Type Name="VendorsSummary">
++      <Column Name="VendorID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
++      <Column Name="SumOfInvoices" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="LastInvoiceDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
++      <Column Name="SumOfPayments" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="LastPaymentDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
++      <Column Name="SumOfCredits" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="BalanceDue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Association Name="Vendor_VendorsSummary" Member="Vendor" ThisKey="VendorID" OtherKey="VendorID" Type="Vendor" IsForeignKey="true" />
+     </Type>
+   </Table>
+ </Database>
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/Payables.dbml.layout b/Student Files/VendorMaintenance/Payables.dbml.layout
+index 0feee42..f39535d 100644
+--- a/Student Files/VendorMaintenance/Payables.dbml.layout	
++++ b/Student Files/VendorMaintenance/Payables.dbml.layout	
+@@ -1,5 +1,5 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Payables">
++<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 9.25" name="Payables">
+   <DataContextMoniker Name="/PayablesDataContext" />
+   <nestedChildShapes>
+     <classShape Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" absoluteBounds="3.125, 0.875, 2, 3.1170068359375">
+@@ -21,13 +21,13 @@
+         <classShapeMoniker Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" />
+       </nodes>
+     </associationConnector>
+-    <classShape Id="38b7cffa-251c-4731-9682-43ca40279abf" absoluteBounds="5.625, 1.375, 2, 1.3862939453125">
++    <classShape Id="38b7cffa-251c-4731-9682-43ca40279abf" absoluteBounds="5.875, 1.125, 2, 1.3862939453125">
+       <DataClassMoniker Name="/PayablesDataContext/Term" />
+       <nestedChildShapes>
+-        <elementListCompartment Id="6e6a7ce5-0c75-4191-84c4-8d81d4eda150" absoluteBounds="5.64, 1.835, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++        <elementListCompartment Id="6e6a7ce5-0c75-4191-84c4-8d81d4eda150" absoluteBounds="5.89, 1.585, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+       </nestedChildShapes>
+     </classShape>
+-    <associationConnector edgePoints="[(5.625 : 2.06814697265625); (5.125 : 2.06814697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++    <associationConnector edgePoints="[(5.875 : 1.81814697265625); (5.125 : 1.81814697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+       <AssociationMoniker Name="/PayablesDataContext/Term/Term_Vendor" />
+       <nodes>
+         <classShapeMoniker Id="38b7cffa-251c-4731-9682-43ca40279abf" />
+@@ -47,5 +47,58 @@
+         <classShapeMoniker Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" />
+       </nodes>
+     </associationConnector>
++    <classShape Id="833aae66-a62d-4968-84aa-c36551c3f35b" absoluteBounds="3.25, 7.25, 2, 1.7708968098958331">
++      <DataClassMoniker Name="/PayablesDataContext/InvoiceLineItem" />
++      <nestedChildShapes>
++        <elementListCompartment Id="23a0cddb-6310-4d17-9e26-464b79f8f7e5" absoluteBounds="3.265, 7.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++      </nestedChildShapes>
++    </classShape>
++    <associationConnector edgePoints="[(4.1875 : 5.94399251302083); (4.1875 : 7.25)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/GLAccount/GLAccount_InvoiceLineItem" />
++      <nodes>
++        <classShapeMoniker Id="a1e25091-83bd-4d09-a056-9b203daba85a" />
++        <classShapeMoniker Id="833aae66-a62d-4968-84aa-c36551c3f35b" />
++      </nodes>
++    </associationConnector>
++    <classShape Id="14ffeff0-2310-4c71-b7a7-b12a3fbfb802" absoluteBounds="0.5, 3.125, 2, 2.7324039713541666">
++      <DataClassMoniker Name="/PayablesDataContext/Invoice" />
++      <nestedChildShapes>
++        <elementListCompartment Id="9af1a2b1-b2dc-44fe-9b07-d46ad74d42da" absoluteBounds="0.51500000000000012, 3.585, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++      </nestedChildShapes>
++    </classShape>
++    <associationConnector edgePoints="[(1.5 : 5.85740397135417); (1.5 : 8.13544840494792); (3.25 : 8.13544840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/Invoice/Invoice_InvoiceLineItem" />
++      <nodes>
++        <classShapeMoniker Id="14ffeff0-2310-4c71-b7a7-b12a3fbfb802" />
++        <classShapeMoniker Id="833aae66-a62d-4968-84aa-c36551c3f35b" />
++      </nodes>
++    </associationConnector>
++    <associationConnector edgePoints="[(6.593748 : 2.5112939453125); (6.593748 : 4.37100341796875); (4.20833333333333 : 4.37100341796875 : JumpStart); (4.04166666666667 : 4.37100341796875 : JumpEnd); (2.5 : 4.37100341796875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/Term/Term_Invoice" />
++      <nodes>
++        <classShapeMoniker Id="38b7cffa-251c-4731-9682-43ca40279abf" />
++        <classShapeMoniker Id="14ffeff0-2310-4c71-b7a7-b12a3fbfb802" />
++      </nodes>
++    </associationConnector>
++    <associationConnector edgePoints="[(3.125 : 3.55850341796875); (2.5 : 3.55850341796875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/Vendor/Vendor_Invoice" />
++      <nodes>
++        <classShapeMoniker Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" />
++        <classShapeMoniker Id="14ffeff0-2310-4c71-b7a7-b12a3fbfb802" />
++      </nodes>
++    </associationConnector>
++    <classShape Id="e4643a7f-5ec3-4939-881f-7217ba2623c1" absoluteBounds="7.375, 3, 2, 2.1554996744791666">
++      <DataClassMoniker Name="/PayablesDataContext/VendorsSummary" />
++      <nestedChildShapes>
++        <elementListCompartment Id="4174f45a-0c66-4961-9287-fd5aa46c0808" absoluteBounds="7.39, 3.46, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++      </nestedChildShapes>
++    </classShape>
++    <associationConnector edgePoints="[(5.125 : 3.49600341796875); (6.51041466666667 : 3.49600341796875 : JumpStart); (6.67708133333333 : 3.49600341796875 : JumpEnd); (7.375 : 3.49600341796875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/Vendor/Vendor_VendorsSummary" />
++      <nodes>
++        <classShapeMoniker Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" />
++        <classShapeMoniker Id="e4643a7f-5ec3-4939-881f-7217ba2623c1" />
++      </nodes>
++    </associationConnector>
+   </nestedChildShapes>
+ </ordesignerObjectsDiagram>
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/VendorMaintenance.csproj b/Student Files/VendorMaintenance/VendorMaintenance.csproj
+index 6d60567..b737d91 100644
+--- a/Student Files/VendorMaintenance/VendorMaintenance.csproj	
++++ b/Student Files/VendorMaintenance/VendorMaintenance.csproj	
+@@ -73,6 +73,12 @@
+     <Compile Include="frmAddModifyVendor.Designer.cs">
+       <DependentUpon>frmAddModifyVendor.cs</DependentUpon>
+     </Compile>
++    <Compile Include="frmTerm.cs">
++      <SubType>Form</SubType>
++    </Compile>
++    <Compile Include="frmTerm.Designer.cs">
++      <DependentUpon>frmTerm.cs</DependentUpon>
++    </Compile>
+     <Compile Include="frmVendorMaintenance.cs">
+       <SubType>Form</SubType>
+     </Compile>
+@@ -95,6 +101,12 @@
+     <EmbeddedResource Include="frmAddModifyTerm.resx">
+       <DependentUpon>frmAddModifyTerm.cs</DependentUpon>
+     </EmbeddedResource>
++    <EmbeddedResource Include="frmTerm.resx">
++      <DependentUpon>frmTerm.cs</DependentUpon>
++    </EmbeddedResource>
++    <EmbeddedResource Include="frmVendorMaintenance.resx">
++      <DependentUpon>frmVendorMaintenance.cs</DependentUpon>
++    </EmbeddedResource>
+     <EmbeddedResource Include="Properties\Resources.resx">
+       <Generator>ResXFileCodeGenerator</Generator>
+       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+diff --git a/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs b/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs
+index e08cba1..af1df70 100644
+--- a/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs	
++++ b/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs	
+@@ -50,10 +50,9 @@
+             // 
+             // txtTID
+             // 
+-            this.txtTID.Enabled = false;
+             this.txtTID.Location = new System.Drawing.Point(12, 27);
+             this.txtTID.Name = "txtTID";
+-            this.txtTID.Size = new System.Drawing.Size(107, 20);
++            this.txtTID.Size = new System.Drawing.Size(260, 20);
+             this.txtTID.TabIndex = 1;
+             // 
+             // label2
+@@ -86,7 +85,7 @@
+             // 
+             this.txtTDays.Location = new System.Drawing.Point(12, 191);
+             this.txtTDays.Name = "txtTDays";
+-            this.txtTDays.Size = new System.Drawing.Size(100, 20);
++            this.txtTDays.Size = new System.Drawing.Size(260, 20);
+             this.txtTDays.TabIndex = 5;
+             // 
+             // btnAccept
+diff --git a/Student Files/VendorMaintenance/frmAddModifyTerm.cs b/Student Files/VendorMaintenance/frmAddModifyTerm.cs
+index 99f63f9..b6286d2 100644
+--- a/Student Files/VendorMaintenance/frmAddModifyTerm.cs	
++++ b/Student Files/VendorMaintenance/frmAddModifyTerm.cs	
+@@ -22,7 +22,17 @@ namespace VendorMaintenance
+ 
+         private void frmAddModifyTerm_load(object sender, EventArgs e)
+         {
++            if (addTerm != true)
++            {
++                this.DisplayTermData();
++            }
++        }
+ 
++        private void DisplayTermData()
++        {
++            txtTID.Text = term.TermsID.ToString();
++            txtTDesc.Text = term.Description.ToString();
++            txtTDays.Text = term.DueDays.ToString();
+         }
+ 
+         private void btnAccept_Click(object sender, EventArgs e)
+@@ -37,7 +47,7 @@ namespace VendorMaintenance
+                 {
+                     DataContext.payables.SubmitChanges();
+                     this.DialogResult = DialogResult.OK;
+-                    MessageBox.Show("Term " + Convert.ToString(term.DueDays) + " has been added to the Terms Table");
++                    MessageBox.Show("Term " + Convert.ToString(term.TermsID) + " has been added to the Terms Table");
+                 }
+                 catch (Exception ex)
+                 {
+diff --git a/Student Files/VendorMaintenance/frmTerm.Designer.cs b/Student Files/VendorMaintenance/frmTerm.Designer.cs
+index 8e52ee2..35baa0f 100644
+--- a/Student Files/VendorMaintenance/frmTerm.Designer.cs	
++++ b/Student Files/VendorMaintenance/frmTerm.Designer.cs	
+@@ -38,6 +38,8 @@
+             this.btnAdd = new System.Windows.Forms.Button();
+             this.btnModify = new System.Windows.Forms.Button();
+             this.btnClear = new System.Windows.Forms.Button();
++            this.btnBack = new System.Windows.Forms.Button();
++            this.btnDelete = new System.Windows.Forms.Button();
+             this.SuspendLayout();
+             // 
+             // label1
+@@ -129,11 +131,33 @@
+             this.btnClear.UseVisualStyleBackColor = true;
+             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+             // 
++            // btnBack
++            // 
++            this.btnBack.Location = new System.Drawing.Point(197, 248);
++            this.btnBack.Name = "btnBack";
++            this.btnBack.Size = new System.Drawing.Size(75, 23);
++            this.btnBack.TabIndex = 10;
++            this.btnBack.Text = "Back";
++            this.btnBack.UseVisualStyleBackColor = true;
++            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
++            // 
++            // btnDelete
++            // 
++            this.btnDelete.Enabled = false;
++            this.btnDelete.Location = new System.Drawing.Point(12, 249);
++            this.btnDelete.Name = "btnDelete";
++            this.btnDelete.Size = new System.Drawing.Size(75, 23);
++            this.btnDelete.TabIndex = 11;
++            this.btnDelete.Text = "Delete";
++            this.btnDelete.UseVisualStyleBackColor = true;
++            // 
+             // frmTerm
+             // 
+             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+-            this.ClientSize = new System.Drawing.Size(284, 261);
++            this.ClientSize = new System.Drawing.Size(284, 281);
++            this.Controls.Add(this.btnDelete);
++            this.Controls.Add(this.btnBack);
+             this.Controls.Add(this.btnClear);
+             this.Controls.Add(this.btnModify);
+             this.Controls.Add(this.btnAdd);
+@@ -163,5 +187,7 @@
+         private System.Windows.Forms.Button btnAdd;
+         private System.Windows.Forms.Button btnModify;
+         private System.Windows.Forms.Button btnClear;
++        private System.Windows.Forms.Button btnBack;
++        private System.Windows.Forms.Button btnDelete;
+     }
+ }
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/frmTerm.cs b/Student Files/VendorMaintenance/frmTerm.cs
+index 424736e..229cd46 100644
+--- a/Student Files/VendorMaintenance/frmTerm.cs	
++++ b/Student Files/VendorMaintenance/frmTerm.cs	
+@@ -28,6 +28,8 @@ namespace VendorMaintenance
+                     where Terms.TermsID == Convert.ToInt32(txtTermID.Text)
+                     select Terms).Single();
+                 this.DisplayTerm();
++                btnModify.Enabled = true;
++                btnDelete.Enabled = true;
+             }
+             catch (InvalidOperationException)
+             {
+@@ -47,6 +49,8 @@ namespace VendorMaintenance
+             txtTermID.Text = "";
+             txtTermDesc.Text = "";
+             txtDueDays.Text = "";
++            btnModify.Enabled = false;
++            btnDelete.Enabled = false;
+         }
+ 
+         private void DisplayTerm()
+@@ -99,6 +103,38 @@ namespace VendorMaintenance
+             }
+         }
+ 
++        private void btnBack_Click(object sender, EventArgs e)
++        {
++            frmVendorMaintenance f = new frmVendorMaintenance();
++            this.Hide();
++            f.ShowDialog();
++            
++        }
++
++        /*private void btnDelete_Click(object sender, EventArgs e)
++        {
++            DialogResult result =
++                MessageBox.Show("Delete " + selectedTerm.TermsID + "?", 
++                "ConfirmDelete", MessageBoxButtons.YesNo, 
++                MessageBoxIcon.Question);
++            if(result==DialogResult.Yes)
++            {
++                try
++                {
++                    DataContext.payables.Terms.DeleteOnSubmit(selectedTerm);
++                    DataContext.payables.SubmitChanges();
++                    txtTermID.Text = "";
++                    this.ClearControls();
++                }
++                catch(ChangeConflictException)
++                {
++                    DataContext.GetCurrentValues();
++                    MessageBox.Show("Another user has updated that vendor.", 
++                        "Database Error");
++                    this.DisplayTerm();
++                }
++        }*/
++
+ 
+     }
+ }
+diff --git a/Student Files/VendorMaintenance/frmVendorMaintenance.Designer.cs b/Student Files/VendorMaintenance/frmVendorMaintenance.Designer.cs
+index d98b180..c5c77c0 100644
+--- a/Student Files/VendorMaintenance/frmVendorMaintenance.Designer.cs	
++++ b/Student Files/VendorMaintenance/frmVendorMaintenance.Designer.cs	
+@@ -46,15 +46,16 @@
+             this.Label3 = new System.Windows.Forms.Label();
+             this.txtName = new System.Windows.Forms.TextBox();
+             this.Label2 = new System.Windows.Forms.Label();
++            this.btnViewTerms = new System.Windows.Forms.Button();
++            this.btnViewStates = new System.Windows.Forms.Button();
+             this.SuspendLayout();
+             // 
+             // btnExit
+             // 
+             this.btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+-            this.btnExit.Location = new System.Drawing.Point(378, 252);
+-            this.btnExit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.btnExit.Location = new System.Drawing.Point(284, 205);
+             this.btnExit.Name = "btnExit";
+-            this.btnExit.Size = new System.Drawing.Size(100, 28);
++            this.btnExit.Size = new System.Drawing.Size(75, 23);
+             this.btnExit.TabIndex = 50;
+             this.btnExit.Text = "Exit";
+             this.btnExit.UseVisualStyleBackColor = true;
+@@ -63,10 +64,9 @@
+             // btnDelete
+             // 
+             this.btnDelete.Enabled = false;
+-            this.btnDelete.Location = new System.Drawing.Point(239, 252);
+-            this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.btnDelete.Location = new System.Drawing.Point(179, 205);
+             this.btnDelete.Name = "btnDelete";
+-            this.btnDelete.Size = new System.Drawing.Size(100, 28);
++            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+             this.btnDelete.TabIndex = 49;
+             this.btnDelete.Text = "Delete";
+             this.btnDelete.UseVisualStyleBackColor = true;
+@@ -75,10 +75,9 @@
+             // btnModify
+             // 
+             this.btnModify.Enabled = false;
+-            this.btnModify.Location = new System.Drawing.Point(131, 252);
+-            this.btnModify.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.btnModify.Location = new System.Drawing.Point(98, 205);
+             this.btnModify.Name = "btnModify";
+-            this.btnModify.Size = new System.Drawing.Size(100, 28);
++            this.btnModify.Size = new System.Drawing.Size(75, 23);
+             this.btnModify.TabIndex = 48;
+             this.btnModify.Text = "Modify";
+             this.btnModify.UseVisualStyleBackColor = true;
+@@ -86,10 +85,9 @@
+             // 
+             // btnAdd
+             // 
+-            this.btnAdd.Location = new System.Drawing.Point(23, 252);
+-            this.btnAdd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.btnAdd.Location = new System.Drawing.Point(17, 205);
+             this.btnAdd.Name = "btnAdd";
+-            this.btnAdd.Size = new System.Drawing.Size(100, 28);
++            this.btnAdd.Size = new System.Drawing.Size(75, 23);
+             this.btnAdd.TabIndex = 47;
+             this.btnAdd.Text = "Add";
+             this.btnAdd.UseVisualStyleBackColor = true;
+@@ -97,20 +95,18 @@
+             // 
+             // txtState
+             // 
+-            this.txtState.Location = new System.Drawing.Point(105, 191);
+-            this.txtState.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.txtState.Location = new System.Drawing.Point(79, 155);
+             this.txtState.Name = "txtState";
+             this.txtState.ReadOnly = true;
+-            this.txtState.Size = new System.Drawing.Size(172, 22);
++            this.txtState.Size = new System.Drawing.Size(130, 20);
+             this.txtState.TabIndex = 46;
+             this.txtState.TabStop = false;
+             // 
+             // btnGetVendor
+             // 
+-            this.btnGetVendor.Location = new System.Drawing.Point(181, 17);
+-            this.btnGetVendor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.btnGetVendor.Location = new System.Drawing.Point(136, 14);
+             this.btnGetVendor.Name = "btnGetVendor";
+-            this.btnGetVendor.Size = new System.Drawing.Size(100, 28);
++            this.btnGetVendor.Size = new System.Drawing.Size(75, 23);
+             this.btnGetVendor.TabIndex = 45;
+             this.btnGetVendor.Text = "Get Vendor";
+             this.btnGetVendor.UseVisualStyleBackColor = true;
+@@ -118,134 +114,143 @@
+             // 
+             // txtVendorID
+             // 
+-            this.txtVendorID.Location = new System.Drawing.Point(105, 17);
+-            this.txtVendorID.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.txtVendorID.Location = new System.Drawing.Point(79, 14);
+             this.txtVendorID.Name = "txtVendorID";
+-            this.txtVendorID.Size = new System.Drawing.Size(65, 22);
++            this.txtVendorID.Size = new System.Drawing.Size(50, 20);
+             this.txtVendorID.TabIndex = 44;
+             this.txtVendorID.Tag = "Vendor ID";
+             // 
+             // Label1
+             // 
+             this.Label1.AutoSize = true;
+-            this.Label1.Location = new System.Drawing.Point(20, 21);
+-            this.Label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.Label1.Location = new System.Drawing.Point(15, 17);
+             this.Label1.Name = "Label1";
+-            this.Label1.Size = new System.Drawing.Size(75, 17);
++            this.Label1.Size = new System.Drawing.Size(58, 13);
+             this.Label1.TabIndex = 43;
+             this.Label1.Text = "Vendor ID:";
+             // 
+             // txtZipCode
+             // 
+-            this.txtZipCode.Location = new System.Drawing.Point(372, 192);
+-            this.txtZipCode.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.txtZipCode.Location = new System.Drawing.Point(279, 156);
+             this.txtZipCode.MaxLength = 20;
+             this.txtZipCode.Name = "txtZipCode";
+             this.txtZipCode.ReadOnly = true;
+-            this.txtZipCode.Size = new System.Drawing.Size(105, 22);
++            this.txtZipCode.Size = new System.Drawing.Size(80, 20);
+             this.txtZipCode.TabIndex = 42;
+             this.txtZipCode.TabStop = false;
+             // 
+             // Label7
+             // 
+             this.Label7.AutoSize = true;
+-            this.Label7.Location = new System.Drawing.Point(295, 196);
+-            this.Label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.Label7.Location = new System.Drawing.Point(221, 159);
+             this.Label7.Name = "Label7";
+-            this.Label7.Size = new System.Drawing.Size(67, 17);
++            this.Label7.Size = new System.Drawing.Size(52, 13);
+             this.Label7.TabIndex = 41;
+             this.Label7.Text = "Zip code:";
+             // 
+             // Label6
+             // 
+             this.Label6.AutoSize = true;
+-            this.Label6.Location = new System.Drawing.Point(20, 196);
+-            this.Label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.Label6.Location = new System.Drawing.Point(15, 159);
+             this.Label6.Name = "Label6";
+-            this.Label6.Size = new System.Drawing.Size(45, 17);
++            this.Label6.Size = new System.Drawing.Size(35, 13);
+             this.Label6.TabIndex = 40;
+             this.Label6.Text = "State:";
+             // 
+             // txtCity
+             // 
+-            this.txtCity.Location = new System.Drawing.Point(105, 160);
+-            this.txtCity.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.txtCity.Location = new System.Drawing.Point(79, 130);
+             this.txtCity.MaxLength = 50;
+             this.txtCity.Name = "txtCity";
+             this.txtCity.ReadOnly = true;
+-            this.txtCity.Size = new System.Drawing.Size(372, 22);
++            this.txtCity.Size = new System.Drawing.Size(280, 20);
+             this.txtCity.TabIndex = 39;
+             this.txtCity.TabStop = false;
+             // 
+             // Label5
+             // 
+             this.Label5.AutoSize = true;
+-            this.Label5.Location = new System.Drawing.Point(20, 164);
+-            this.Label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.Label5.Location = new System.Drawing.Point(15, 133);
+             this.Label5.Name = "Label5";
+-            this.Label5.Size = new System.Drawing.Size(35, 17);
++            this.Label5.Size = new System.Drawing.Size(27, 13);
+             this.Label5.TabIndex = 38;
+             this.Label5.Text = "City:";
+             // 
+             // txtAddress2
+             // 
+-            this.txtAddress2.Location = new System.Drawing.Point(105, 128);
+-            this.txtAddress2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.txtAddress2.Location = new System.Drawing.Point(79, 104);
+             this.txtAddress2.MaxLength = 50;
+             this.txtAddress2.Name = "txtAddress2";
+             this.txtAddress2.ReadOnly = true;
+-            this.txtAddress2.Size = new System.Drawing.Size(372, 22);
++            this.txtAddress2.Size = new System.Drawing.Size(280, 20);
+             this.txtAddress2.TabIndex = 37;
+             this.txtAddress2.TabStop = false;
+             // 
+             // txtAddress1
+             // 
+-            this.txtAddress1.Location = new System.Drawing.Point(105, 96);
+-            this.txtAddress1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.txtAddress1.Location = new System.Drawing.Point(79, 78);
+             this.txtAddress1.MaxLength = 50;
+             this.txtAddress1.Name = "txtAddress1";
+             this.txtAddress1.ReadOnly = true;
+-            this.txtAddress1.Size = new System.Drawing.Size(372, 22);
++            this.txtAddress1.Size = new System.Drawing.Size(280, 20);
+             this.txtAddress1.TabIndex = 36;
+             this.txtAddress1.TabStop = false;
+             // 
+             // Label3
+             // 
+             this.Label3.AutoSize = true;
+-            this.Label3.Location = new System.Drawing.Point(20, 100);
+-            this.Label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.Label3.Location = new System.Drawing.Point(15, 81);
+             this.Label3.Name = "Label3";
+-            this.Label3.Size = new System.Drawing.Size(64, 17);
++            this.Label3.Size = new System.Drawing.Size(48, 13);
+             this.Label3.TabIndex = 35;
+             this.Label3.Text = "Address:";
+             // 
+             // txtName
+             // 
+-            this.txtName.Location = new System.Drawing.Point(105, 64);
+-            this.txtName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.txtName.Location = new System.Drawing.Point(79, 52);
+             this.txtName.MaxLength = 50;
+             this.txtName.Name = "txtName";
+             this.txtName.ReadOnly = true;
+-            this.txtName.Size = new System.Drawing.Size(372, 22);
++            this.txtName.Size = new System.Drawing.Size(280, 20);
+             this.txtName.TabIndex = 34;
+             this.txtName.TabStop = false;
+             // 
+             // Label2
+             // 
+             this.Label2.AutoSize = true;
+-            this.Label2.Location = new System.Drawing.Point(20, 68);
+-            this.Label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.Label2.Location = new System.Drawing.Point(15, 55);
+             this.Label2.Name = "Label2";
+-            this.Label2.Size = new System.Drawing.Size(49, 17);
++            this.Label2.Size = new System.Drawing.Size(38, 13);
+             this.Label2.TabIndex = 33;
+             this.Label2.Text = "Name:";
+             // 
++            // btnViewTerms
++            // 
++            this.btnViewTerms.Location = new System.Drawing.Point(17, 234);
++            this.btnViewTerms.Name = "btnViewTerms";
++            this.btnViewTerms.Size = new System.Drawing.Size(75, 23);
++            this.btnViewTerms.TabIndex = 51;
++            this.btnViewTerms.Text = "View Terms";
++            this.btnViewTerms.UseVisualStyleBackColor = true;
++            this.btnViewTerms.Click += new System.EventHandler(this.btnViewTerms_Click);
++            // 
++            // btnViewStates
++            // 
++            this.btnViewStates.Location = new System.Drawing.Point(179, 234);
++            this.btnViewStates.Name = "btnViewStates";
++            this.btnViewStates.Size = new System.Drawing.Size(75, 23);
++            this.btnViewStates.TabIndex = 52;
++            this.btnViewStates.Text = "View States";
++            this.btnViewStates.UseVisualStyleBackColor = true;
++            // 
+             // frmVendorMaintenance
+             // 
+-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
++            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+             this.CancelButton = this.btnExit;
+-            this.ClientSize = new System.Drawing.Size(506, 323);
++            this.ClientSize = new System.Drawing.Size(386, 269);
++            this.Controls.Add(this.btnViewStates);
++            this.Controls.Add(this.btnViewTerms);
+             this.Controls.Add(this.btnExit);
+             this.Controls.Add(this.btnDelete);
+             this.Controls.Add(this.btnModify);
+@@ -265,7 +270,6 @@
+             this.Controls.Add(this.txtName);
+             this.Controls.Add(this.Label2);
+             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+             this.Name = "frmVendorMaintenance";
+             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+             this.Text = "Vendor Maintenance";
+@@ -294,6 +298,8 @@
+         internal System.Windows.Forms.Label Label3;
+         internal System.Windows.Forms.TextBox txtName;
+         internal System.Windows.Forms.Label Label2;
++        private System.Windows.Forms.Button btnViewTerms;
++        private System.Windows.Forms.Button btnViewStates;
+     }
+ }
+ 
+diff --git a/Student Files/VendorMaintenance/frmVendorMaintenance.cs b/Student Files/VendorMaintenance/frmVendorMaintenance.cs
+index 8d340a0..fa4edd6 100644
+--- a/Student Files/VendorMaintenance/frmVendorMaintenance.cs	
++++ b/Student Files/VendorMaintenance/frmVendorMaintenance.cs	
+@@ -134,5 +134,22 @@ namespace VendorMaintenance
+         {
+             this.Close();
+         }
++
++        private void btnViewTerms_Click(object sender, EventArgs e)
++        {
++            frmTerm f = new frmTerm();
++            this.Hide();
++            f.ShowDialog();
++            
++            /*frmAddModifyVendor addModifyVendorForm = new frmAddModifyVendor();
++            addModifyVendorForm.addVendor = true;
++            DialogResult result = addModifyVendorForm.ShowDialog();
++            if (result == DialogResult.OK)
++            {
++                selectedVendor = addModifyVendorForm.vendor;
++                txtVendorID.Text = selectedVendor.VendorID.ToString();
++                this.DisplayVendor();
++            }*/
++        }
+     }
+ }
+-- 
+2.11.0.windows.1
+

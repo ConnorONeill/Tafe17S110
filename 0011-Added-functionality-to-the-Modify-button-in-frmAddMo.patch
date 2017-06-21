@@ -1,0 +1,144 @@
+From 8cfc0ab11a92d89ce4b920079d45b8222652c782 Mon Sep 17 00:00:00 2001
+From: Takuma Wood-Cooper <Takuma.Wood-Cooper@outlook.com>
+Date: Tue, 20 Jun 2017 16:55:04 +0930
+Subject: [PATCH 11/17] Added functionality to the Modify button in
+ frmAddModifyTerm Added additional functionality to frmTerm
+
+Work done by Takuma Wood-Cooper
+---
+ .../VendorMaintenance/frmAddModifyTerm.Designer.cs |  1 +
+ .../VendorMaintenance/frmAddModifyTerm.cs          | 42 ++++++++++++++++------
+ .../VendorMaintenance/frmTerm.Designer.cs          |  4 +--
+ Student Files/VendorMaintenance/frmTerm.cs         | 17 +++++++++
+ 4 files changed, 52 insertions(+), 12 deletions(-)
+
+diff --git a/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs b/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs
+index 3530e7b..e08cba1 100644
+--- a/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs	
++++ b/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs	
+@@ -107,6 +107,7 @@
+             this.btnCancel.TabIndex = 7;
+             this.btnCancel.Text = "Cancel";
+             this.btnCancel.UseVisualStyleBackColor = true;
++            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+             // 
+             // btnClear
+             // 
+diff --git a/Student Files/VendorMaintenance/frmAddModifyTerm.cs b/Student Files/VendorMaintenance/frmAddModifyTerm.cs
+index e447439..99f63f9 100644
+--- a/Student Files/VendorMaintenance/frmAddModifyTerm.cs	
++++ b/Student Files/VendorMaintenance/frmAddModifyTerm.cs	
+@@ -27,21 +27,38 @@ namespace VendorMaintenance
+ 
+         private void btnAccept_Click(object sender, EventArgs e)
+         {
+-            term = new Term();
+-            this.PutTermData(term);
+-            DataContext.payables.Terms.InsertOnSubmit(term);
+-
+-            try
++            if (addTerm)
+             {
+-                DataContext.payables.SubmitChanges();
+-                this.DialogResult = DialogResult.OK;
+-                MessageBox.Show("Term " + Convert.ToString(term.DueDays) + " has been added to the Terms Table");
++                term = new Term();
++                this.PutTermData(term);
++                DataContext.payables.Terms.InsertOnSubmit(term);
++
++                try
++                {
++                    DataContext.payables.SubmitChanges();
++                    this.DialogResult = DialogResult.OK;
++                    MessageBox.Show("Term " + Convert.ToString(term.DueDays) + " has been added to the Terms Table");
++                }
++                catch (Exception ex)
++                {
++                    MessageBox.Show(ex.Message, ex.GetType().ToString());
++                }
+             }
+-            catch (Exception ex)
++            else
+             {
+-                MessageBox.Show(ex.Message, ex.GetType().ToString());
++                this.PutTermData(term);
++                try
++                {
++                    DataContext.payables.SubmitChanges();
++                    this.DialogResult = DialogResult.OK;
++                }
++                catch (Exception ex)
++                {
++                    MessageBox.Show(ex.Message, ex.GetType().ToString());
++                }
+             }
+         }
++
+         private void PutTermData(Term term)
+         {
+             term.TermsID = Int32.Parse(txtTID.Text);
+@@ -55,5 +72,10 @@ namespace VendorMaintenance
+             txtTDesc.Text = "";
+             txtTDays.Text = "";
+         }
++
++        private void btnCancel_Click(object sender, EventArgs e)
++        {
++            this.Hide();
++        }
+     }
+ }
+diff --git a/Student Files/VendorMaintenance/frmTerm.Designer.cs b/Student Files/VendorMaintenance/frmTerm.Designer.cs
+index 9a87f9c..8e52ee2 100644
+--- a/Student Files/VendorMaintenance/frmTerm.Designer.cs	
++++ b/Student Files/VendorMaintenance/frmTerm.Designer.cs	
+@@ -113,7 +113,7 @@
+             // 
+             this.btnModify.Location = new System.Drawing.Point(94, 219);
+             this.btnModify.Name = "btnModify";
+-            this.btnModify.Size = new System.Drawing.Size(75, 23);
++            this.btnModify.Size = new System.Drawing.Size(97, 23);
+             this.btnModify.TabIndex = 8;
+             this.btnModify.Text = "Modify";
+             this.btnModify.UseVisualStyleBackColor = true;
+@@ -121,7 +121,7 @@
+             // 
+             // btnClear
+             // 
+-            this.btnClear.Location = new System.Drawing.Point(176, 219);
++            this.btnClear.Location = new System.Drawing.Point(197, 219);
+             this.btnClear.Name = "btnClear";
+             this.btnClear.Size = new System.Drawing.Size(75, 23);
+             this.btnClear.TabIndex = 9;
+diff --git a/Student Files/VendorMaintenance/frmTerm.cs b/Student Files/VendorMaintenance/frmTerm.cs
+index fbff983..424736e 100644
+--- a/Student Files/VendorMaintenance/frmTerm.cs	
++++ b/Student Files/VendorMaintenance/frmTerm.cs	
+@@ -79,7 +79,24 @@ namespace VendorMaintenance
+ 
+         private void btnModify_Click(object sender, EventArgs e)
+         {
++            frmAddModifyTerm f;
++            f = new frmAddModifyTerm();
++
++            f.addTerm = false;
+ 
++            f.term = selectedTerm;
++
++            DialogResult result = f.ShowDialog();
++            if (result == DialogResult.OK || result == DialogResult.Retry)
++            {
++                selectedTerm = f.term;
++                this.DisplayTerm();
++            }
++            else if (result == DialogResult.Abort)
++            {
++                txtTermID.Text="";
++                this.ClearControls();
++            }
+         }
+ 
+ 
+-- 
+2.11.0.windows.1
+

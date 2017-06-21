@@ -1,0 +1,503 @@
+From b2d9e1a171973c8ef4111b0f1141ee95079e0458 Mon Sep 17 00:00:00 2001
+From: Takuma Wood-Cooper <Takuma.Wood-Cooper@outlook.com>
+Date: Tue, 20 Jun 2017 16:13:11 +0930
+Subject: [PATCH 09/17] Created and coded the Add and Clear buttons
+
+---
+ .../VendorMaintenance/frmAddModifyTerm.Designer.cs | 154 +++++++++++++++++++++
+ .../VendorMaintenance/frmAddModifyTerm.cs          |  63 +++++++++
+ .../VendorMaintenance/frmAddModifyTerm.resx        | 120 ++++++++++++++++
+ .../VendorMaintenance/frmVendorMaintenance.resx    | 120 ++++++++++++++++
+ 4 files changed, 457 insertions(+)
+ create mode 100644 Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs
+ create mode 100644 Student Files/VendorMaintenance/frmAddModifyTerm.cs
+ create mode 100644 Student Files/VendorMaintenance/frmAddModifyTerm.resx
+ create mode 100644 Student Files/VendorMaintenance/frmVendorMaintenance.resx
+
+diff --git a/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs b/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs
+new file mode 100644
+index 0000000..3530e7b
+--- /dev/null
++++ b/Student Files/VendorMaintenance/frmAddModifyTerm.Designer.cs	
+@@ -0,0 +1,154 @@
++﻿namespace VendorMaintenance
++{
++    partial class frmAddModifyTerm
++    {
++        /// <summary>
++        /// Required designer variable.
++        /// </summary>
++        private System.ComponentModel.IContainer components = null;
++
++        /// <summary>
++        /// Clean up any resources being used.
++        /// </summary>
++        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
++        protected override void Dispose(bool disposing)
++        {
++            if (disposing && (components != null))
++            {
++                components.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++
++        #region Windows Form Designer generated code
++
++        /// <summary>
++        /// Required method for Designer support - do not modify
++        /// the contents of this method with the code editor.
++        /// </summary>
++        private void InitializeComponent()
++        {
++            this.label1 = new System.Windows.Forms.Label();
++            this.txtTID = new System.Windows.Forms.TextBox();
++            this.label2 = new System.Windows.Forms.Label();
++            this.txtTDesc = new System.Windows.Forms.TextBox();
++            this.label3 = new System.Windows.Forms.Label();
++            this.txtTDays = new System.Windows.Forms.TextBox();
++            this.btnAccept = new System.Windows.Forms.Button();
++            this.btnCancel = new System.Windows.Forms.Button();
++            this.btnClear = new System.Windows.Forms.Button();
++            this.SuspendLayout();
++            // 
++            // label1
++            // 
++            this.label1.AutoSize = true;
++            this.label1.Location = new System.Drawing.Point(13, 11);
++            this.label1.Name = "label1";
++            this.label1.Size = new System.Drawing.Size(45, 13);
++            this.label1.TabIndex = 0;
++            this.label1.Text = "Term ID";
++            // 
++            // txtTID
++            // 
++            this.txtTID.Enabled = false;
++            this.txtTID.Location = new System.Drawing.Point(12, 27);
++            this.txtTID.Name = "txtTID";
++            this.txtTID.Size = new System.Drawing.Size(107, 20);
++            this.txtTID.TabIndex = 1;
++            // 
++            // label2
++            // 
++            this.label2.AutoSize = true;
++            this.label2.Location = new System.Drawing.Point(13, 50);
++            this.label2.Name = "label2";
++            this.label2.Size = new System.Drawing.Size(87, 13);
++            this.label2.TabIndex = 2;
++            this.label2.Text = "Term Description";
++            // 
++            // txtTDesc
++            // 
++            this.txtTDesc.Location = new System.Drawing.Point(12, 66);
++            this.txtTDesc.Multiline = true;
++            this.txtTDesc.Name = "txtTDesc";
++            this.txtTDesc.Size = new System.Drawing.Size(260, 106);
++            this.txtTDesc.TabIndex = 3;
++            // 
++            // label3
++            // 
++            this.label3.AutoSize = true;
++            this.label3.Location = new System.Drawing.Point(13, 175);
++            this.label3.Name = "label3";
++            this.label3.Size = new System.Drawing.Size(74, 13);
++            this.label3.TabIndex = 4;
++            this.label3.Text = "Term Duration";
++            // 
++            // txtTDays
++            // 
++            this.txtTDays.Location = new System.Drawing.Point(12, 191);
++            this.txtTDays.Name = "txtTDays";
++            this.txtTDays.Size = new System.Drawing.Size(100, 20);
++            this.txtTDays.TabIndex = 5;
++            // 
++            // btnAccept
++            // 
++            this.btnAccept.Location = new System.Drawing.Point(12, 226);
++            this.btnAccept.Name = "btnAccept";
++            this.btnAccept.Size = new System.Drawing.Size(75, 23);
++            this.btnAccept.TabIndex = 6;
++            this.btnAccept.Text = "Accept";
++            this.btnAccept.UseVisualStyleBackColor = true;
++            this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
++            // 
++            // btnCancel
++            // 
++            this.btnCancel.Location = new System.Drawing.Point(197, 226);
++            this.btnCancel.Name = "btnCancel";
++            this.btnCancel.Size = new System.Drawing.Size(75, 23);
++            this.btnCancel.TabIndex = 7;
++            this.btnCancel.Text = "Cancel";
++            this.btnCancel.UseVisualStyleBackColor = true;
++            // 
++            // btnClear
++            // 
++            this.btnClear.Location = new System.Drawing.Point(93, 226);
++            this.btnClear.Name = "btnClear";
++            this.btnClear.Size = new System.Drawing.Size(98, 23);
++            this.btnClear.TabIndex = 8;
++            this.btnClear.Text = "Clear All Fields";
++            this.btnClear.UseVisualStyleBackColor = true;
++            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
++            // 
++            // frmAddModifyTerm
++            // 
++            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
++            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
++            this.ClientSize = new System.Drawing.Size(284, 261);
++            this.Controls.Add(this.btnClear);
++            this.Controls.Add(this.btnCancel);
++            this.Controls.Add(this.btnAccept);
++            this.Controls.Add(this.txtTDays);
++            this.Controls.Add(this.label3);
++            this.Controls.Add(this.txtTDesc);
++            this.Controls.Add(this.label2);
++            this.Controls.Add(this.txtTID);
++            this.Controls.Add(this.label1);
++            this.Name = "frmAddModifyTerm";
++            this.Text = "Add or Modify Term";
++            this.ResumeLayout(false);
++            this.PerformLayout();
++
++        }
++
++        #endregion
++
++        private System.Windows.Forms.Label label1;
++        private System.Windows.Forms.TextBox txtTID;
++        private System.Windows.Forms.Label label2;
++        private System.Windows.Forms.TextBox txtTDesc;
++        private System.Windows.Forms.Label label3;
++        private System.Windows.Forms.TextBox txtTDays;
++        private System.Windows.Forms.Button btnAccept;
++        private System.Windows.Forms.Button btnCancel;
++        private System.Windows.Forms.Button btnClear;
++    }
++}
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/frmAddModifyTerm.cs b/Student Files/VendorMaintenance/frmAddModifyTerm.cs
+new file mode 100644
+index 0000000..dae6d30
+--- /dev/null
++++ b/Student Files/VendorMaintenance/frmAddModifyTerm.cs	
+@@ -0,0 +1,63 @@
++﻿using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Data;
++using System.Drawing;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++using System.Windows.Forms;
++
++namespace VendorMaintenance
++{
++    public partial class frmAddModifyTerm : Form
++    {
++        public frmAddModifyTerm()
++        {
++            InitializeComponent();
++        }
++
++        public Term term;
++
++        private void frmAddModifyTerm_load(object sender, EventArgs e)
++        {
++
++        }
++
++        private void btnSave_Click(object sender, EventArgs e)
++        {
++
++        }
++
++        private void btnAccept_Click(object sender, EventArgs e)
++        {
++            term = new Term();
++            this.PutTermData(term);
++            DataContext.payables.Terms.InsertOnSubmit(term);
++
++            try
++            {
++                DataContext.payables.SubmitChanges();
++                this.DialogResult = DialogResult.OK;
++                MessageBox.Show("Term " + Convert.ToString(term.DueDays) + " has been added to the Terms Table");
++            }
++            catch (Exception ex)
++            {
++                MessageBox.Show(ex.Message, ex.GetType().ToString());
++            }
++        }
++        private void PutTermData(Term term)
++        {
++            term.TermsID = Int32.Parse(txtTID.Text);
++            term.Description = txtTDesc.Text;
++            term.DueDays = short.Parse(txtTDays.Text);
++        }
++
++        private void btnClear_Click(object sender, EventArgs e)
++        {
++            txtTID.Text = "";
++            txtTDesc.Text = "";
++            txtTDays.Text = "";
++        }
++    }
++}
+diff --git a/Student Files/VendorMaintenance/frmAddModifyTerm.resx b/Student Files/VendorMaintenance/frmAddModifyTerm.resx
+new file mode 100644
+index 0000000..1af7de1
+--- /dev/null
++++ b/Student Files/VendorMaintenance/frmAddModifyTerm.resx	
+@@ -0,0 +1,120 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" use="required" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++</root>
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/frmVendorMaintenance.resx b/Student Files/VendorMaintenance/frmVendorMaintenance.resx
+new file mode 100644
+index 0000000..1af7de1
+--- /dev/null
++++ b/Student Files/VendorMaintenance/frmVendorMaintenance.resx	
+@@ -0,0 +1,120 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" use="required" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++</root>
+\ No newline at end of file
+-- 
+2.11.0.windows.1
+

@@ -1,0 +1,1526 @@
+From d8b04f0ebefcf1195e3c3d57416dc13ffbc1d708 Mon Sep 17 00:00:00 2001
+From: Connor <iconnoroneill@gmail.com>
+Date: Tue, 20 Jun 2017 17:28:19 +0930
+Subject: [PATCH 12/17] Complete work on frmState.cs and frmAddModifyState
+
+Signed-off-by: Connor <iconnoroneill@gmail.com>
+---
+ Student Files/VendorMaintenance/Payables.dbml      |   47 +-
+ .../VendorMaintenance/Payables.dbml.layout         |   71 +-
+ .../VendorMaintenance/Payables.designer.cs         | 1024 ++++++++++++++++++++
+ .../VendorMaintenance/VendorMaintenance.csproj     |    9 +
+ .../frmAddModifyState.Designer.cs                  |   19 +-
+ .../VendorMaintenance/frmAddModifyState.cs         |   67 +-
+ 6 files changed, 1206 insertions(+), 31 deletions(-)
+
+diff --git a/Student Files/VendorMaintenance/Payables.dbml b/Student Files/VendorMaintenance/Payables.dbml
+index 8074564..1e710e9 100644
+--- a/Student Files/VendorMaintenance/Payables.dbml	
++++ b/Student Files/VendorMaintenance/Payables.dbml	
+@@ -1,5 +1,4 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<Database Name="Payables" Class="PayablesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
++﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Payables" Class="PayablesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+   <Connection Mode="AppSettings" ConnectionString="Data Source=localhost\sqlexpress;Initial Catalog=Payables;Integrated Security=True" SettingsObjectName="VendorMaintenance.Properties.Settings" SettingsPropertyName="PayablesConnectionString" Provider="System.Data.SqlClient" />
+   <Table Name="dbo.Vendors" Member="Vendors">
+     <Type Name="Vendor">
+@@ -15,6 +14,8 @@
+       <Column Name="ContactFName" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+       <Column Name="DefaultTermsID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+       <Column Name="DefaultAccountNo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
++      <Association Name="Vendor_Invoice" Member="Invoices" ThisKey="VendorID" OtherKey="VendorID" Type="Invoice" />
++      <Association Name="Vendor_VendorsSummary" Member="VendorsSummary" ThisKey="VendorID" OtherKey="VendorID" Type="VendorsSummary" Cardinality="One" />
+       <Association Name="State_Vendor" Member="State1" ThisKey="State" OtherKey="StateCode" Type="State" IsForeignKey="true" />
+       <Association Name="Term_Vendor" Member="Term" ThisKey="DefaultTermsID" OtherKey="TermsID" Type="Term" IsForeignKey="true" />
+       <Association Name="GLAccount_Vendor" Member="GLAccount" ThisKey="DefaultAccountNo" OtherKey="AccountNo" Type="GLAccount" IsForeignKey="true" />
+@@ -35,6 +36,7 @@
+       <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+       <Column Name="DueDays" Type="System.Int16" DbType="SmallInt NOT NULL" CanBeNull="false" />
+       <Association Name="Term_Vendor" Member="Vendors" ThisKey="TermsID" OtherKey="DefaultTermsID" Type="Vendor" />
++      <Association Name="Term_Invoice" Member="Invoices" ThisKey="TermsID" OtherKey="TermsID" Type="Invoice" />
+     </Type>
+   </Table>
+   <Table Name="dbo.GLAccounts" Member="GLAccounts">
+@@ -42,6 +44,47 @@
+       <Column Name="AccountNo" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+       <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+       <Association Name="GLAccount_Vendor" Member="Vendors" ThisKey="AccountNo" OtherKey="DefaultAccountNo" Type="Vendor" />
++      <Association Name="GLAccount_InvoiceLineItem" Member="InvoiceLineItems" ThisKey="AccountNo" OtherKey="AccountNo" Type="InvoiceLineItem" />
++    </Type>
++  </Table>
++  <Table Name="dbo.InvoiceLineItems" Member="InvoiceLineItems">
++    <Type Name="InvoiceLineItem">
++      <Column Name="InvoiceID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
++      <Column Name="InvoiceSequence" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
++      <Column Name="AccountNo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
++      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="Description" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
++      <Association Name="GLAccount_InvoiceLineItem" Member="GLAccount" ThisKey="AccountNo" OtherKey="AccountNo" Type="GLAccount" IsForeignKey="true" />
++      <Association Name="Invoice_InvoiceLineItem" Member="Invoice" ThisKey="InvoiceID" OtherKey="InvoiceID" Type="Invoice" IsForeignKey="true" />
++    </Type>
++  </Table>
++  <Table Name="dbo.Invoices" Member="Invoices">
++    <Type Name="Invoice">
++      <Column Name="InvoiceID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
++      <Column Name="VendorID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
++      <Column Name="InvoiceNumber" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
++      <Column Name="InvoiceDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
++      <Column Name="InvoiceTotal" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="PaymentTotal" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="CreditTotal" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="TermsID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
++      <Column Name="DueDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
++      <Column Name="PaymentDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
++      <Association Name="Invoice_InvoiceLineItem" Member="InvoiceLineItems" ThisKey="InvoiceID" OtherKey="InvoiceID" Type="InvoiceLineItem" />
++      <Association Name="Term_Invoice" Member="Term" ThisKey="TermsID" OtherKey="TermsID" Type="Term" IsForeignKey="true" />
++      <Association Name="Vendor_Invoice" Member="Vendor" ThisKey="VendorID" OtherKey="VendorID" Type="Vendor" IsForeignKey="true" />
++    </Type>
++  </Table>
++  <Table Name="dbo.VendorsSummary" Member="VendorsSummaries">
++    <Type Name="VendorsSummary">
++      <Column Name="VendorID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
++      <Column Name="SumOfInvoices" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="LastInvoiceDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
++      <Column Name="SumOfPayments" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="LastPaymentDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
++      <Column Name="SumOfCredits" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Column Name="BalanceDue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
++      <Association Name="Vendor_VendorsSummary" Member="Vendor" ThisKey="VendorID" OtherKey="VendorID" Type="Vendor" IsForeignKey="true" />
+     </Type>
+   </Table>
+ </Database>
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/Payables.dbml.layout b/Student Files/VendorMaintenance/Payables.dbml.layout
+index 0feee42..3f08977 100644
+--- a/Student Files/VendorMaintenance/Payables.dbml.layout	
++++ b/Student Files/VendorMaintenance/Payables.dbml.layout	
+@@ -2,19 +2,19 @@
+ <ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Payables">
+   <DataContextMoniker Name="/PayablesDataContext" />
+   <nestedChildShapes>
+-    <classShape Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" absoluteBounds="3.125, 0.875, 2, 3.1170068359375">
++    <classShape Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" absoluteBounds="3.375, 1.25, 2, 3.1170068359375">
+       <DataClassMoniker Name="/PayablesDataContext/Vendor" />
+       <nestedChildShapes>
+-        <elementListCompartment Id="c6167d4b-12be-47e5-8023-6dfd5574587b" absoluteBounds="3.14, 1.335, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++        <elementListCompartment Id="c6167d4b-12be-47e5-8023-6dfd5574587b" absoluteBounds="3.39, 1.71, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+       </nestedChildShapes>
+     </classShape>
+-    <classShape Id="1b6a663b-ccee-4b79-b6bd-70c1487b1dd5" absoluteBounds="0.5, 1.125, 2, 1.5785953776041666">
++    <classShape Id="1b6a663b-ccee-4b79-b6bd-70c1487b1dd5" absoluteBounds="0.5, 3.5, 2, 1.5785953776041666">
+       <DataClassMoniker Name="/PayablesDataContext/State" />
+       <nestedChildShapes>
+-        <elementListCompartment Id="53ac978e-4b01-45a5-acf5-a702efc1728b" absoluteBounds="0.51500000000000012, 1.585, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++        <elementListCompartment Id="53ac978e-4b01-45a5-acf5-a702efc1728b" absoluteBounds="0.51500000000000012, 3.96, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+       </nestedChildShapes>
+     </classShape>
+-    <associationConnector edgePoints="[(2.5 : 1.91429768880208); (3.125 : 1.91429768880208)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++    <associationConnector edgePoints="[(2.5 : 3.93350341796875); (2.63541666666667 : 3.93350341796875 : JumpStart); (2.80208333333333 : 3.93350341796875 : JumpEnd); (3.375 : 3.93350341796875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+       <AssociationMoniker Name="/PayablesDataContext/State/State_Vendor" />
+       <nodes>
+         <classShapeMoniker Id="1b6a663b-ccee-4b79-b6bd-70c1487b1dd5" />
+@@ -27,25 +27,78 @@
+         <elementListCompartment Id="6e6a7ce5-0c75-4191-84c4-8d81d4eda150" absoluteBounds="5.64, 1.835, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+       </nestedChildShapes>
+     </classShape>
+-    <associationConnector edgePoints="[(5.625 : 2.06814697265625); (5.125 : 2.06814697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++    <associationConnector edgePoints="[(5.625 : 2.06814697265625); (5.375 : 2.06814697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+       <AssociationMoniker Name="/PayablesDataContext/Term/Term_Vendor" />
+       <nodes>
+         <classShapeMoniker Id="38b7cffa-251c-4731-9682-43ca40279abf" />
+         <classShapeMoniker Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" />
+       </nodes>
+     </associationConnector>
+-    <classShape Id="a1e25091-83bd-4d09-a056-9b203daba85a" absoluteBounds="3.125, 4.75, 2, 1.1939925130208327">
++    <classShape Id="a1e25091-83bd-4d09-a056-9b203daba85a" absoluteBounds="3.25, 4.875, 2, 1.1939925130208327">
+       <DataClassMoniker Name="/PayablesDataContext/GLAccount" />
+       <nestedChildShapes>
+-        <elementListCompartment Id="786b738e-7914-4794-87e9-de3d5c69bf0f" absoluteBounds="3.1399999999999997, 5.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++        <elementListCompartment Id="786b738e-7914-4794-87e9-de3d5c69bf0f" absoluteBounds="3.2649999999999997, 5.335, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+       </nestedChildShapes>
+     </classShape>
+-    <associationConnector edgePoints="[(4.125 : 4.75); (4.125 : 3.9920068359375)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++    <associationConnector edgePoints="[(4.3125 : 4.875); (4.3125 : 4.3670068359375)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+       <AssociationMoniker Name="/PayablesDataContext/GLAccount/GLAccount_Vendor" />
+       <nodes>
+         <classShapeMoniker Id="a1e25091-83bd-4d09-a056-9b203daba85a" />
+         <classShapeMoniker Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" />
+       </nodes>
+     </associationConnector>
++    <classShape Id="fcaa5a1e-4ac9-4828-a09d-8bcde544efd3" absoluteBounds="0.875, 1.625, 2, 1.7708968098958331">
++      <DataClassMoniker Name="/PayablesDataContext/InvoiceLineItem" />
++      <nestedChildShapes>
++        <elementListCompartment Id="586a2904-d22c-4315-b3e8-460507b45d91" absoluteBounds="0.89000000000000012, 2.085, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++      </nestedChildShapes>
++    </classShape>
++    <associationConnector edgePoints="[(3.25 : 5.6050439453125); (2.71875 : 5.6050439453125); (2.71875 : 3.39589680989583)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/GLAccount/GLAccount_InvoiceLineItem" />
++      <nodes>
++        <classShapeMoniker Id="a1e25091-83bd-4d09-a056-9b203daba85a" />
++        <classShapeMoniker Id="fcaa5a1e-4ac9-4828-a09d-8bcde544efd3" />
++      </nodes>
++    </associationConnector>
++    <classShape Id="7f8e381a-9d1b-401f-b307-7d873a64f6e3" absoluteBounds="8.125, 0.625, 2, 2.7324039713541666">
++      <DataClassMoniker Name="/PayablesDataContext/Invoice" />
++      <nestedChildShapes>
++        <elementListCompartment Id="86ca95c0-6940-4603-a48f-d30e68054dd4" absoluteBounds="8.14, 1.085, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++      </nestedChildShapes>
++    </classShape>
++    <associationConnector edgePoints="[(8.125 : 0.90625); (1.875 : 0.90625); (1.875 : 1.625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/Invoice/Invoice_InvoiceLineItem" />
++      <nodes>
++        <classShapeMoniker Id="7f8e381a-9d1b-401f-b307-7d873a64f6e3" />
++        <classShapeMoniker Id="fcaa5a1e-4ac9-4828-a09d-8bcde544efd3" />
++      </nodes>
++    </associationConnector>
++    <associationConnector edgePoints="[(7.625 : 2.06814697265625); (8.125 : 2.06814697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/Term/Term_Invoice" />
++      <nodes>
++        <classShapeMoniker Id="38b7cffa-251c-4731-9682-43ca40279abf" />
++        <classShapeMoniker Id="7f8e381a-9d1b-401f-b307-7d873a64f6e3" />
++      </nodes>
++    </associationConnector>
++    <associationConnector edgePoints="[(5.375 : 3.09059895833333); (8.125 : 3.09059895833333)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/Vendor/Vendor_Invoice" />
++      <nodes>
++        <classShapeMoniker Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" />
++        <classShapeMoniker Id="7f8e381a-9d1b-401f-b307-7d873a64f6e3" />
++      </nodes>
++    </associationConnector>
++    <classShape Id="71950ecc-c1de-41b4-a24b-d0727fc4072a" absoluteBounds="6.625, 4.5, 2, 2.1554996744791666">
++      <DataClassMoniker Name="/PayablesDataContext/VendorsSummary" />
++      <nestedChildShapes>
++        <elementListCompartment Id="4dfcee64-545d-4698-b768-a38d71aa9a2e" absoluteBounds="6.64, 4.96, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
++      </nestedChildShapes>
++    </classShape>
++    <associationConnector edgePoints="[(5.375 : 4.13023361979167); (8.25 : 4.13023361979167); (8.25 : 4.5)]" fixedFrom="Algorithm" fixedTo="Algorithm">
++      <AssociationMoniker Name="/PayablesDataContext/Vendor/Vendor_VendorsSummary" />
++      <nodes>
++        <classShapeMoniker Id="b4f82977-6d55-488d-b3a1-acb215bd71a1" />
++        <classShapeMoniker Id="71950ecc-c1de-41b4-a24b-d0727fc4072a" />
++      </nodes>
++    </associationConnector>
+   </nestedChildShapes>
+ </ordesignerObjectsDiagram>
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/Payables.designer.cs b/Student Files/VendorMaintenance/Payables.designer.cs
+index b5c9a6e..f994154 100644
+--- a/Student Files/VendorMaintenance/Payables.designer.cs	
++++ b/Student Files/VendorMaintenance/Payables.designer.cs	
+@@ -42,6 +42,15 @@ namespace VendorMaintenance
+     partial void InsertGLAccount(GLAccount instance);
+     partial void UpdateGLAccount(GLAccount instance);
+     partial void DeleteGLAccount(GLAccount instance);
++    partial void InsertInvoiceLineItem(InvoiceLineItem instance);
++    partial void UpdateInvoiceLineItem(InvoiceLineItem instance);
++    partial void DeleteInvoiceLineItem(InvoiceLineItem instance);
++    partial void InsertInvoice(Invoice instance);
++    partial void UpdateInvoice(Invoice instance);
++    partial void DeleteInvoice(Invoice instance);
++    partial void InsertVendorsSummary(VendorsSummary instance);
++    partial void UpdateVendorsSummary(VendorsSummary instance);
++    partial void DeleteVendorsSummary(VendorsSummary instance);
+     #endregion
+ 		
+ 		public PayablesDataContext() : 
+@@ -105,6 +114,30 @@ namespace VendorMaintenance
+ 				return this.GetTable<GLAccount>();
+ 			}
+ 		}
++		
++		public System.Data.Linq.Table<InvoiceLineItem> InvoiceLineItems
++		{
++			get
++			{
++				return this.GetTable<InvoiceLineItem>();
++			}
++		}
++		
++		public System.Data.Linq.Table<Invoice> Invoices
++		{
++			get
++			{
++				return this.GetTable<Invoice>();
++			}
++		}
++		
++		public System.Data.Linq.Table<VendorsSummary> VendorsSummaries
++		{
++			get
++			{
++				return this.GetTable<VendorsSummary>();
++			}
++		}
+ 	}
+ 	
+ 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Vendors")]
+@@ -137,6 +170,10 @@ namespace VendorMaintenance
+ 		
+ 		private int _DefaultAccountNo;
+ 		
++		private EntitySet<Invoice> _Invoices;
++		
++		private EntityRef<VendorsSummary> _VendorsSummary;
++		
+ 		private EntityRef<State> _State1;
+ 		
+ 		private EntityRef<Term> _Term;
+@@ -175,6 +212,8 @@ namespace VendorMaintenance
+ 		
+ 		public Vendor()
+ 		{
++			this._Invoices = new EntitySet<Invoice>(new Action<Invoice>(this.attach_Invoices), new Action<Invoice>(this.detach_Invoices));
++			this._VendorsSummary = default(EntityRef<VendorsSummary>);
+ 			this._State1 = default(EntityRef<State>);
+ 			this._Term = default(EntityRef<Term>);
+ 			this._GLAccount = default(EntityRef<GLAccount>);
+@@ -433,6 +472,48 @@ namespace VendorMaintenance
+ 			}
+ 		}
+ 		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Vendor_Invoice", Storage="_Invoices", ThisKey="VendorID", OtherKey="VendorID")]
++		public EntitySet<Invoice> Invoices
++		{
++			get
++			{
++				return this._Invoices;
++			}
++			set
++			{
++				this._Invoices.Assign(value);
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Vendor_VendorsSummary", Storage="_VendorsSummary", ThisKey="VendorID", OtherKey="VendorID", IsUnique=true, IsForeignKey=false)]
++		public VendorsSummary VendorsSummary
++		{
++			get
++			{
++				return this._VendorsSummary.Entity;
++			}
++			set
++			{
++				VendorsSummary previousValue = this._VendorsSummary.Entity;
++				if (((previousValue != value) 
++							|| (this._VendorsSummary.HasLoadedOrAssignedValue == false)))
++				{
++					this.SendPropertyChanging();
++					if ((previousValue != null))
++					{
++						this._VendorsSummary.Entity = null;
++						previousValue.Vendor = null;
++					}
++					this._VendorsSummary.Entity = value;
++					if ((value != null))
++					{
++						value.Vendor = this;
++					}
++					this.SendPropertyChanged("VendorsSummary");
++				}
++			}
++		}
++		
+ 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="State_Vendor", Storage="_State1", ThisKey="State", OtherKey="StateCode", IsForeignKey=true)]
+ 		public State State1
+ 		{
+@@ -554,6 +635,18 @@ namespace VendorMaintenance
+ 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+ 			}
+ 		}
++		
++		private void attach_Invoices(Invoice entity)
++		{
++			this.SendPropertyChanging();
++			entity.Vendor = this;
++		}
++		
++		private void detach_Invoices(Invoice entity)
++		{
++			this.SendPropertyChanging();
++			entity.Vendor = null;
++		}
+ 	}
+ 	
+ 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.States")]
+@@ -732,6 +825,8 @@ namespace VendorMaintenance
+ 		
+ 		private EntitySet<Vendor> _Vendors;
+ 		
++		private EntitySet<Invoice> _Invoices;
++		
+     #region Extensibility Method Definitions
+     partial void OnLoaded();
+     partial void OnValidate(System.Data.Linq.ChangeAction action);
+@@ -747,6 +842,7 @@ namespace VendorMaintenance
+ 		public Term()
+ 		{
+ 			this._Vendors = new EntitySet<Vendor>(new Action<Vendor>(this.attach_Vendors), new Action<Vendor>(this.detach_Vendors));
++			this._Invoices = new EntitySet<Invoice>(new Action<Invoice>(this.attach_Invoices), new Action<Invoice>(this.detach_Invoices));
+ 			OnCreated();
+ 		}
+ 		
+@@ -823,6 +919,19 @@ namespace VendorMaintenance
+ 			}
+ 		}
+ 		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Term_Invoice", Storage="_Invoices", ThisKey="TermsID", OtherKey="TermsID")]
++		public EntitySet<Invoice> Invoices
++		{
++			get
++			{
++				return this._Invoices;
++			}
++			set
++			{
++				this._Invoices.Assign(value);
++			}
++		}
++		
+ 		public event PropertyChangingEventHandler PropertyChanging;
+ 		
+ 		public event PropertyChangedEventHandler PropertyChanged;
+@@ -854,6 +963,18 @@ namespace VendorMaintenance
+ 			this.SendPropertyChanging();
+ 			entity.Term = null;
+ 		}
++		
++		private void attach_Invoices(Invoice entity)
++		{
++			this.SendPropertyChanging();
++			entity.Term = this;
++		}
++		
++		private void detach_Invoices(Invoice entity)
++		{
++			this.SendPropertyChanging();
++			entity.Term = null;
++		}
+ 	}
+ 	
+ 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.GLAccounts")]
+@@ -868,6 +989,8 @@ namespace VendorMaintenance
+ 		
+ 		private EntitySet<Vendor> _Vendors;
+ 		
++		private EntitySet<InvoiceLineItem> _InvoiceLineItems;
++		
+     #region Extensibility Method Definitions
+     partial void OnLoaded();
+     partial void OnValidate(System.Data.Linq.ChangeAction action);
+@@ -881,6 +1004,7 @@ namespace VendorMaintenance
+ 		public GLAccount()
+ 		{
+ 			this._Vendors = new EntitySet<Vendor>(new Action<Vendor>(this.attach_Vendors), new Action<Vendor>(this.detach_Vendors));
++			this._InvoiceLineItems = new EntitySet<InvoiceLineItem>(new Action<InvoiceLineItem>(this.attach_InvoiceLineItems), new Action<InvoiceLineItem>(this.detach_InvoiceLineItems));
+ 			OnCreated();
+ 		}
+ 		
+@@ -937,6 +1061,19 @@ namespace VendorMaintenance
+ 			}
+ 		}
+ 		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GLAccount_InvoiceLineItem", Storage="_InvoiceLineItems", ThisKey="AccountNo", OtherKey="AccountNo")]
++		public EntitySet<InvoiceLineItem> InvoiceLineItems
++		{
++			get
++			{
++				return this._InvoiceLineItems;
++			}
++			set
++			{
++				this._InvoiceLineItems.Assign(value);
++			}
++		}
++		
+ 		public event PropertyChangingEventHandler PropertyChanging;
+ 		
+ 		public event PropertyChangedEventHandler PropertyChanged;
+@@ -968,6 +1105,893 @@ namespace VendorMaintenance
+ 			this.SendPropertyChanging();
+ 			entity.GLAccount = null;
+ 		}
++		
++		private void attach_InvoiceLineItems(InvoiceLineItem entity)
++		{
++			this.SendPropertyChanging();
++			entity.GLAccount = this;
++		}
++		
++		private void detach_InvoiceLineItems(InvoiceLineItem entity)
++		{
++			this.SendPropertyChanging();
++			entity.GLAccount = null;
++		}
++	}
++	
++	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.InvoiceLineItems")]
++	public partial class InvoiceLineItem : INotifyPropertyChanging, INotifyPropertyChanged
++	{
++		
++		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
++		
++		private int _InvoiceID;
++		
++		private short _InvoiceSequence;
++		
++		private int _AccountNo;
++		
++		private decimal _Amount;
++		
++		private string _Description;
++		
++		private EntityRef<GLAccount> _GLAccount;
++		
++		private EntityRef<Invoice> _Invoice;
++		
++    #region Extensibility Method Definitions
++    partial void OnLoaded();
++    partial void OnValidate(System.Data.Linq.ChangeAction action);
++    partial void OnCreated();
++    partial void OnInvoiceIDChanging(int value);
++    partial void OnInvoiceIDChanged();
++    partial void OnInvoiceSequenceChanging(short value);
++    partial void OnInvoiceSequenceChanged();
++    partial void OnAccountNoChanging(int value);
++    partial void OnAccountNoChanged();
++    partial void OnAmountChanging(decimal value);
++    partial void OnAmountChanged();
++    partial void OnDescriptionChanging(string value);
++    partial void OnDescriptionChanged();
++    #endregion
++		
++		public InvoiceLineItem()
++		{
++			this._GLAccount = default(EntityRef<GLAccount>);
++			this._Invoice = default(EntityRef<Invoice>);
++			OnCreated();
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceID", DbType="Int NOT NULL", IsPrimaryKey=true)]
++		public int InvoiceID
++		{
++			get
++			{
++				return this._InvoiceID;
++			}
++			set
++			{
++				if ((this._InvoiceID != value))
++				{
++					if (this._Invoice.HasLoadedOrAssignedValue)
++					{
++						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
++					}
++					this.OnInvoiceIDChanging(value);
++					this.SendPropertyChanging();
++					this._InvoiceID = value;
++					this.SendPropertyChanged("InvoiceID");
++					this.OnInvoiceIDChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceSequence", DbType="SmallInt NOT NULL", IsPrimaryKey=true)]
++		public short InvoiceSequence
++		{
++			get
++			{
++				return this._InvoiceSequence;
++			}
++			set
++			{
++				if ((this._InvoiceSequence != value))
++				{
++					this.OnInvoiceSequenceChanging(value);
++					this.SendPropertyChanging();
++					this._InvoiceSequence = value;
++					this.SendPropertyChanged("InvoiceSequence");
++					this.OnInvoiceSequenceChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountNo", DbType="Int NOT NULL")]
++		public int AccountNo
++		{
++			get
++			{
++				return this._AccountNo;
++			}
++			set
++			{
++				if ((this._AccountNo != value))
++				{
++					if (this._GLAccount.HasLoadedOrAssignedValue)
++					{
++						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
++					}
++					this.OnAccountNoChanging(value);
++					this.SendPropertyChanging();
++					this._AccountNo = value;
++					this.SendPropertyChanged("AccountNo");
++					this.OnAccountNoChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Money NOT NULL")]
++		public decimal Amount
++		{
++			get
++			{
++				return this._Amount;
++			}
++			set
++			{
++				if ((this._Amount != value))
++				{
++					this.OnAmountChanging(value);
++					this.SendPropertyChanging();
++					this._Amount = value;
++					this.SendPropertyChanged("Amount");
++					this.OnAmountChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
++		public string Description
++		{
++			get
++			{
++				return this._Description;
++			}
++			set
++			{
++				if ((this._Description != value))
++				{
++					this.OnDescriptionChanging(value);
++					this.SendPropertyChanging();
++					this._Description = value;
++					this.SendPropertyChanged("Description");
++					this.OnDescriptionChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="GLAccount_InvoiceLineItem", Storage="_GLAccount", ThisKey="AccountNo", OtherKey="AccountNo", IsForeignKey=true)]
++		public GLAccount GLAccount
++		{
++			get
++			{
++				return this._GLAccount.Entity;
++			}
++			set
++			{
++				GLAccount previousValue = this._GLAccount.Entity;
++				if (((previousValue != value) 
++							|| (this._GLAccount.HasLoadedOrAssignedValue == false)))
++				{
++					this.SendPropertyChanging();
++					if ((previousValue != null))
++					{
++						this._GLAccount.Entity = null;
++						previousValue.InvoiceLineItems.Remove(this);
++					}
++					this._GLAccount.Entity = value;
++					if ((value != null))
++					{
++						value.InvoiceLineItems.Add(this);
++						this._AccountNo = value.AccountNo;
++					}
++					else
++					{
++						this._AccountNo = default(int);
++					}
++					this.SendPropertyChanged("GLAccount");
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Invoice_InvoiceLineItem", Storage="_Invoice", ThisKey="InvoiceID", OtherKey="InvoiceID", IsForeignKey=true)]
++		public Invoice Invoice
++		{
++			get
++			{
++				return this._Invoice.Entity;
++			}
++			set
++			{
++				Invoice previousValue = this._Invoice.Entity;
++				if (((previousValue != value) 
++							|| (this._Invoice.HasLoadedOrAssignedValue == false)))
++				{
++					this.SendPropertyChanging();
++					if ((previousValue != null))
++					{
++						this._Invoice.Entity = null;
++						previousValue.InvoiceLineItems.Remove(this);
++					}
++					this._Invoice.Entity = value;
++					if ((value != null))
++					{
++						value.InvoiceLineItems.Add(this);
++						this._InvoiceID = value.InvoiceID;
++					}
++					else
++					{
++						this._InvoiceID = default(int);
++					}
++					this.SendPropertyChanged("Invoice");
++				}
++			}
++		}
++		
++		public event PropertyChangingEventHandler PropertyChanging;
++		
++		public event PropertyChangedEventHandler PropertyChanged;
++		
++		protected virtual void SendPropertyChanging()
++		{
++			if ((this.PropertyChanging != null))
++			{
++				this.PropertyChanging(this, emptyChangingEventArgs);
++			}
++		}
++		
++		protected virtual void SendPropertyChanged(String propertyName)
++		{
++			if ((this.PropertyChanged != null))
++			{
++				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
++			}
++		}
++	}
++	
++	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Invoices")]
++	public partial class Invoice : INotifyPropertyChanging, INotifyPropertyChanged
++	{
++		
++		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
++		
++		private int _InvoiceID;
++		
++		private int _VendorID;
++		
++		private string _InvoiceNumber;
++		
++		private System.DateTime _InvoiceDate;
++		
++		private decimal _InvoiceTotal;
++		
++		private decimal _PaymentTotal;
++		
++		private decimal _CreditTotal;
++		
++		private int _TermsID;
++		
++		private System.DateTime _DueDate;
++		
++		private System.Nullable<System.DateTime> _PaymentDate;
++		
++		private EntitySet<InvoiceLineItem> _InvoiceLineItems;
++		
++		private EntityRef<Term> _Term;
++		
++		private EntityRef<Vendor> _Vendor;
++		
++    #region Extensibility Method Definitions
++    partial void OnLoaded();
++    partial void OnValidate(System.Data.Linq.ChangeAction action);
++    partial void OnCreated();
++    partial void OnInvoiceIDChanging(int value);
++    partial void OnInvoiceIDChanged();
++    partial void OnVendorIDChanging(int value);
++    partial void OnVendorIDChanged();
++    partial void OnInvoiceNumberChanging(string value);
++    partial void OnInvoiceNumberChanged();
++    partial void OnInvoiceDateChanging(System.DateTime value);
++    partial void OnInvoiceDateChanged();
++    partial void OnInvoiceTotalChanging(decimal value);
++    partial void OnInvoiceTotalChanged();
++    partial void OnPaymentTotalChanging(decimal value);
++    partial void OnPaymentTotalChanged();
++    partial void OnCreditTotalChanging(decimal value);
++    partial void OnCreditTotalChanged();
++    partial void OnTermsIDChanging(int value);
++    partial void OnTermsIDChanged();
++    partial void OnDueDateChanging(System.DateTime value);
++    partial void OnDueDateChanged();
++    partial void OnPaymentDateChanging(System.Nullable<System.DateTime> value);
++    partial void OnPaymentDateChanged();
++    #endregion
++		
++		public Invoice()
++		{
++			this._InvoiceLineItems = new EntitySet<InvoiceLineItem>(new Action<InvoiceLineItem>(this.attach_InvoiceLineItems), new Action<InvoiceLineItem>(this.detach_InvoiceLineItems));
++			this._Term = default(EntityRef<Term>);
++			this._Vendor = default(EntityRef<Vendor>);
++			OnCreated();
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
++		public int InvoiceID
++		{
++			get
++			{
++				return this._InvoiceID;
++			}
++			set
++			{
++				if ((this._InvoiceID != value))
++				{
++					this.OnInvoiceIDChanging(value);
++					this.SendPropertyChanging();
++					this._InvoiceID = value;
++					this.SendPropertyChanged("InvoiceID");
++					this.OnInvoiceIDChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VendorID", DbType="Int NOT NULL")]
++		public int VendorID
++		{
++			get
++			{
++				return this._VendorID;
++			}
++			set
++			{
++				if ((this._VendorID != value))
++				{
++					if (this._Vendor.HasLoadedOrAssignedValue)
++					{
++						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
++					}
++					this.OnVendorIDChanging(value);
++					this.SendPropertyChanging();
++					this._VendorID = value;
++					this.SendPropertyChanged("VendorID");
++					this.OnVendorIDChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceNumber", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
++		public string InvoiceNumber
++		{
++			get
++			{
++				return this._InvoiceNumber;
++			}
++			set
++			{
++				if ((this._InvoiceNumber != value))
++				{
++					this.OnInvoiceNumberChanging(value);
++					this.SendPropertyChanging();
++					this._InvoiceNumber = value;
++					this.SendPropertyChanged("InvoiceNumber");
++					this.OnInvoiceNumberChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceDate", DbType="SmallDateTime NOT NULL")]
++		public System.DateTime InvoiceDate
++		{
++			get
++			{
++				return this._InvoiceDate;
++			}
++			set
++			{
++				if ((this._InvoiceDate != value))
++				{
++					this.OnInvoiceDateChanging(value);
++					this.SendPropertyChanging();
++					this._InvoiceDate = value;
++					this.SendPropertyChanged("InvoiceDate");
++					this.OnInvoiceDateChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceTotal", DbType="Money NOT NULL")]
++		public decimal InvoiceTotal
++		{
++			get
++			{
++				return this._InvoiceTotal;
++			}
++			set
++			{
++				if ((this._InvoiceTotal != value))
++				{
++					this.OnInvoiceTotalChanging(value);
++					this.SendPropertyChanging();
++					this._InvoiceTotal = value;
++					this.SendPropertyChanged("InvoiceTotal");
++					this.OnInvoiceTotalChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PaymentTotal", DbType="Money NOT NULL")]
++		public decimal PaymentTotal
++		{
++			get
++			{
++				return this._PaymentTotal;
++			}
++			set
++			{
++				if ((this._PaymentTotal != value))
++				{
++					this.OnPaymentTotalChanging(value);
++					this.SendPropertyChanging();
++					this._PaymentTotal = value;
++					this.SendPropertyChanged("PaymentTotal");
++					this.OnPaymentTotalChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditTotal", DbType="Money NOT NULL")]
++		public decimal CreditTotal
++		{
++			get
++			{
++				return this._CreditTotal;
++			}
++			set
++			{
++				if ((this._CreditTotal != value))
++				{
++					this.OnCreditTotalChanging(value);
++					this.SendPropertyChanging();
++					this._CreditTotal = value;
++					this.SendPropertyChanged("CreditTotal");
++					this.OnCreditTotalChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TermsID", DbType="Int NOT NULL")]
++		public int TermsID
++		{
++			get
++			{
++				return this._TermsID;
++			}
++			set
++			{
++				if ((this._TermsID != value))
++				{
++					if (this._Term.HasLoadedOrAssignedValue)
++					{
++						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
++					}
++					this.OnTermsIDChanging(value);
++					this.SendPropertyChanging();
++					this._TermsID = value;
++					this.SendPropertyChanged("TermsID");
++					this.OnTermsIDChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DueDate", DbType="SmallDateTime NOT NULL")]
++		public System.DateTime DueDate
++		{
++			get
++			{
++				return this._DueDate;
++			}
++			set
++			{
++				if ((this._DueDate != value))
++				{
++					this.OnDueDateChanging(value);
++					this.SendPropertyChanging();
++					this._DueDate = value;
++					this.SendPropertyChanged("DueDate");
++					this.OnDueDateChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PaymentDate", DbType="SmallDateTime")]
++		public System.Nullable<System.DateTime> PaymentDate
++		{
++			get
++			{
++				return this._PaymentDate;
++			}
++			set
++			{
++				if ((this._PaymentDate != value))
++				{
++					this.OnPaymentDateChanging(value);
++					this.SendPropertyChanging();
++					this._PaymentDate = value;
++					this.SendPropertyChanged("PaymentDate");
++					this.OnPaymentDateChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Invoice_InvoiceLineItem", Storage="_InvoiceLineItems", ThisKey="InvoiceID", OtherKey="InvoiceID")]
++		public EntitySet<InvoiceLineItem> InvoiceLineItems
++		{
++			get
++			{
++				return this._InvoiceLineItems;
++			}
++			set
++			{
++				this._InvoiceLineItems.Assign(value);
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Term_Invoice", Storage="_Term", ThisKey="TermsID", OtherKey="TermsID", IsForeignKey=true)]
++		public Term Term
++		{
++			get
++			{
++				return this._Term.Entity;
++			}
++			set
++			{
++				Term previousValue = this._Term.Entity;
++				if (((previousValue != value) 
++							|| (this._Term.HasLoadedOrAssignedValue == false)))
++				{
++					this.SendPropertyChanging();
++					if ((previousValue != null))
++					{
++						this._Term.Entity = null;
++						previousValue.Invoices.Remove(this);
++					}
++					this._Term.Entity = value;
++					if ((value != null))
++					{
++						value.Invoices.Add(this);
++						this._TermsID = value.TermsID;
++					}
++					else
++					{
++						this._TermsID = default(int);
++					}
++					this.SendPropertyChanged("Term");
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Vendor_Invoice", Storage="_Vendor", ThisKey="VendorID", OtherKey="VendorID", IsForeignKey=true)]
++		public Vendor Vendor
++		{
++			get
++			{
++				return this._Vendor.Entity;
++			}
++			set
++			{
++				Vendor previousValue = this._Vendor.Entity;
++				if (((previousValue != value) 
++							|| (this._Vendor.HasLoadedOrAssignedValue == false)))
++				{
++					this.SendPropertyChanging();
++					if ((previousValue != null))
++					{
++						this._Vendor.Entity = null;
++						previousValue.Invoices.Remove(this);
++					}
++					this._Vendor.Entity = value;
++					if ((value != null))
++					{
++						value.Invoices.Add(this);
++						this._VendorID = value.VendorID;
++					}
++					else
++					{
++						this._VendorID = default(int);
++					}
++					this.SendPropertyChanged("Vendor");
++				}
++			}
++		}
++		
++		public event PropertyChangingEventHandler PropertyChanging;
++		
++		public event PropertyChangedEventHandler PropertyChanged;
++		
++		protected virtual void SendPropertyChanging()
++		{
++			if ((this.PropertyChanging != null))
++			{
++				this.PropertyChanging(this, emptyChangingEventArgs);
++			}
++		}
++		
++		protected virtual void SendPropertyChanged(String propertyName)
++		{
++			if ((this.PropertyChanged != null))
++			{
++				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
++			}
++		}
++		
++		private void attach_InvoiceLineItems(InvoiceLineItem entity)
++		{
++			this.SendPropertyChanging();
++			entity.Invoice = this;
++		}
++		
++		private void detach_InvoiceLineItems(InvoiceLineItem entity)
++		{
++			this.SendPropertyChanging();
++			entity.Invoice = null;
++		}
++	}
++	
++	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.VendorsSummary")]
++	public partial class VendorsSummary : INotifyPropertyChanging, INotifyPropertyChanged
++	{
++		
++		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
++		
++		private int _VendorID;
++		
++		private decimal _SumOfInvoices;
++		
++		private System.Nullable<System.DateTime> _LastInvoiceDate;
++		
++		private decimal _SumOfPayments;
++		
++		private System.Nullable<System.DateTime> _LastPaymentDate;
++		
++		private decimal _SumOfCredits;
++		
++		private decimal _BalanceDue;
++		
++		private EntityRef<Vendor> _Vendor;
++		
++    #region Extensibility Method Definitions
++    partial void OnLoaded();
++    partial void OnValidate(System.Data.Linq.ChangeAction action);
++    partial void OnCreated();
++    partial void OnVendorIDChanging(int value);
++    partial void OnVendorIDChanged();
++    partial void OnSumOfInvoicesChanging(decimal value);
++    partial void OnSumOfInvoicesChanged();
++    partial void OnLastInvoiceDateChanging(System.Nullable<System.DateTime> value);
++    partial void OnLastInvoiceDateChanged();
++    partial void OnSumOfPaymentsChanging(decimal value);
++    partial void OnSumOfPaymentsChanged();
++    partial void OnLastPaymentDateChanging(System.Nullable<System.DateTime> value);
++    partial void OnLastPaymentDateChanged();
++    partial void OnSumOfCreditsChanging(decimal value);
++    partial void OnSumOfCreditsChanged();
++    partial void OnBalanceDueChanging(decimal value);
++    partial void OnBalanceDueChanged();
++    #endregion
++		
++		public VendorsSummary()
++		{
++			this._Vendor = default(EntityRef<Vendor>);
++			OnCreated();
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VendorID", DbType="Int NOT NULL", IsPrimaryKey=true)]
++		public int VendorID
++		{
++			get
++			{
++				return this._VendorID;
++			}
++			set
++			{
++				if ((this._VendorID != value))
++				{
++					if (this._Vendor.HasLoadedOrAssignedValue)
++					{
++						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
++					}
++					this.OnVendorIDChanging(value);
++					this.SendPropertyChanging();
++					this._VendorID = value;
++					this.SendPropertyChanged("VendorID");
++					this.OnVendorIDChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SumOfInvoices", DbType="Money NOT NULL")]
++		public decimal SumOfInvoices
++		{
++			get
++			{
++				return this._SumOfInvoices;
++			}
++			set
++			{
++				if ((this._SumOfInvoices != value))
++				{
++					this.OnSumOfInvoicesChanging(value);
++					this.SendPropertyChanging();
++					this._SumOfInvoices = value;
++					this.SendPropertyChanged("SumOfInvoices");
++					this.OnSumOfInvoicesChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastInvoiceDate", DbType="SmallDateTime")]
++		public System.Nullable<System.DateTime> LastInvoiceDate
++		{
++			get
++			{
++				return this._LastInvoiceDate;
++			}
++			set
++			{
++				if ((this._LastInvoiceDate != value))
++				{
++					this.OnLastInvoiceDateChanging(value);
++					this.SendPropertyChanging();
++					this._LastInvoiceDate = value;
++					this.SendPropertyChanged("LastInvoiceDate");
++					this.OnLastInvoiceDateChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SumOfPayments", DbType="Money NOT NULL")]
++		public decimal SumOfPayments
++		{
++			get
++			{
++				return this._SumOfPayments;
++			}
++			set
++			{
++				if ((this._SumOfPayments != value))
++				{
++					this.OnSumOfPaymentsChanging(value);
++					this.SendPropertyChanging();
++					this._SumOfPayments = value;
++					this.SendPropertyChanged("SumOfPayments");
++					this.OnSumOfPaymentsChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastPaymentDate", DbType="SmallDateTime")]
++		public System.Nullable<System.DateTime> LastPaymentDate
++		{
++			get
++			{
++				return this._LastPaymentDate;
++			}
++			set
++			{
++				if ((this._LastPaymentDate != value))
++				{
++					this.OnLastPaymentDateChanging(value);
++					this.SendPropertyChanging();
++					this._LastPaymentDate = value;
++					this.SendPropertyChanged("LastPaymentDate");
++					this.OnLastPaymentDateChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SumOfCredits", DbType="Money NOT NULL")]
++		public decimal SumOfCredits
++		{
++			get
++			{
++				return this._SumOfCredits;
++			}
++			set
++			{
++				if ((this._SumOfCredits != value))
++				{
++					this.OnSumOfCreditsChanging(value);
++					this.SendPropertyChanging();
++					this._SumOfCredits = value;
++					this.SendPropertyChanged("SumOfCredits");
++					this.OnSumOfCreditsChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BalanceDue", DbType="Money NOT NULL")]
++		public decimal BalanceDue
++		{
++			get
++			{
++				return this._BalanceDue;
++			}
++			set
++			{
++				if ((this._BalanceDue != value))
++				{
++					this.OnBalanceDueChanging(value);
++					this.SendPropertyChanging();
++					this._BalanceDue = value;
++					this.SendPropertyChanged("BalanceDue");
++					this.OnBalanceDueChanged();
++				}
++			}
++		}
++		
++		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Vendor_VendorsSummary", Storage="_Vendor", ThisKey="VendorID", OtherKey="VendorID", IsForeignKey=true)]
++		public Vendor Vendor
++		{
++			get
++			{
++				return this._Vendor.Entity;
++			}
++			set
++			{
++				Vendor previousValue = this._Vendor.Entity;
++				if (((previousValue != value) 
++							|| (this._Vendor.HasLoadedOrAssignedValue == false)))
++				{
++					this.SendPropertyChanging();
++					if ((previousValue != null))
++					{
++						this._Vendor.Entity = null;
++						previousValue.VendorsSummary = null;
++					}
++					this._Vendor.Entity = value;
++					if ((value != null))
++					{
++						value.VendorsSummary = this;
++						this._VendorID = value.VendorID;
++					}
++					else
++					{
++						this._VendorID = default(int);
++					}
++					this.SendPropertyChanged("Vendor");
++				}
++			}
++		}
++		
++		public event PropertyChangingEventHandler PropertyChanging;
++		
++		public event PropertyChangedEventHandler PropertyChanged;
++		
++		protected virtual void SendPropertyChanging()
++		{
++			if ((this.PropertyChanging != null))
++			{
++				this.PropertyChanging(this, emptyChangingEventArgs);
++			}
++		}
++		
++		protected virtual void SendPropertyChanged(String propertyName)
++		{
++			if ((this.PropertyChanged != null))
++			{
++				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
++			}
++		}
+ 	}
+ }
+ #pragma warning restore 1591
+diff --git a/Student Files/VendorMaintenance/VendorMaintenance.csproj b/Student Files/VendorMaintenance/VendorMaintenance.csproj
+index c75941a..a66d88c 100644
+--- a/Student Files/VendorMaintenance/VendorMaintenance.csproj	
++++ b/Student Files/VendorMaintenance/VendorMaintenance.csproj	
+@@ -73,6 +73,12 @@
+     <Compile Include="frmAddModifyVendor.Designer.cs">
+       <DependentUpon>frmAddModifyVendor.cs</DependentUpon>
+     </Compile>
++    <Compile Include="frmState.cs">
++      <SubType>Form</SubType>
++    </Compile>
++    <Compile Include="frmState.Designer.cs">
++      <DependentUpon>frmState.cs</DependentUpon>
++    </Compile>
+     <Compile Include="frmVendorMaintenance.cs">
+       <SubType>Form</SubType>
+     </Compile>
+@@ -98,6 +104,9 @@
+     <EmbeddedResource Include="frmAddModifyVendor.resx">
+       <DependentUpon>frmAddModifyVendor.cs</DependentUpon>
+     </EmbeddedResource>
++    <EmbeddedResource Include="frmState.resx">
++      <DependentUpon>frmState.cs</DependentUpon>
++    </EmbeddedResource>
+     <EmbeddedResource Include="Properties\Resources.resx">
+       <Generator>ResXFileCodeGenerator</Generator>
+       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+diff --git a/Student Files/VendorMaintenance/frmAddModifyState.Designer.cs b/Student Files/VendorMaintenance/frmAddModifyState.Designer.cs
+index 15035da..db41823 100644
+--- a/Student Files/VendorMaintenance/frmAddModifyState.Designer.cs	
++++ b/Student Files/VendorMaintenance/frmAddModifyState.Designer.cs	
+@@ -37,7 +37,6 @@
+             this.lblFirstZip = new System.Windows.Forms.Label();
+             this.lblLastZip = new System.Windows.Forms.Label();
+             this.btnAccept = new System.Windows.Forms.Button();
+-            this.btnCancel = new System.Windows.Forms.Button();
+             this.SuspendLayout();
+             // 
+             // txtCode
+@@ -76,7 +75,7 @@
+             this.lblCode.Size = new System.Drawing.Size(60, 13);
+             this.lblCode.TabIndex = 4;
+             this.lblCode.Text = "State Code";
+-            this.lblCode.Click += new System.EventHandler(this.label1_Click);
++        
+             // 
+             // lblName
+             // 
+@@ -107,29 +106,19 @@
+             // 
+             // btnAccept
+             // 
+-            this.btnAccept.Location = new System.Drawing.Point(31, 145);
++            this.btnAccept.Location = new System.Drawing.Point(12, 145);
+             this.btnAccept.Name = "btnAccept";
+             this.btnAccept.Size = new System.Drawing.Size(75, 23);
+             this.btnAccept.TabIndex = 8;
+             this.btnAccept.Text = "Accept";
+             this.btnAccept.UseVisualStyleBackColor = true;
+-            // 
+-            // btnCancel
+-            // 
+-            this.btnCancel.Location = new System.Drawing.Point(124, 145);
+-            this.btnCancel.Name = "btnCancel";
+-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+-            this.btnCancel.TabIndex = 9;
+-            this.btnCancel.Text = "Cancel";
+-            this.btnCancel.UseVisualStyleBackColor = true;
+-            this.btnCancel.Click += new System.EventHandler(this.button1_Click);
++            this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
+             // 
+             // frmAddModifyState
+             // 
+             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+             this.ClientSize = new System.Drawing.Size(284, 261);
+-            this.Controls.Add(this.btnCancel);
+             this.Controls.Add(this.btnAccept);
+             this.Controls.Add(this.lblLastZip);
+             this.Controls.Add(this.lblFirstZip);
+@@ -141,7 +130,6 @@
+             this.Controls.Add(this.txtCode);
+             this.Name = "frmAddModifyState";
+             this.Text = "frmAddModifyState";
+-            this.Load += new System.EventHandler(this.frmAddModifyState_Load);
+             this.ResumeLayout(false);
+             this.PerformLayout();
+ 
+@@ -158,6 +146,5 @@
+         private System.Windows.Forms.Label lblFirstZip;
+         private System.Windows.Forms.Label lblLastZip;
+         private System.Windows.Forms.Button btnAccept;
+-        private System.Windows.Forms.Button btnCancel;
+     }
+ }
+\ No newline at end of file
+diff --git a/Student Files/VendorMaintenance/frmAddModifyState.cs b/Student Files/VendorMaintenance/frmAddModifyState.cs
+index a39a85b..f06d775 100644
+--- a/Student Files/VendorMaintenance/frmAddModifyState.cs	
++++ b/Student Files/VendorMaintenance/frmAddModifyState.cs	
+@@ -5,7 +5,6 @@ using System.Data;
+ using System.Drawing;
+ using System.Linq;
+ using System.Text;
+-using System.Threading.Tasks;
+ using System.Windows.Forms;
+ 
+ namespace VendorMaintenance
+@@ -16,20 +15,80 @@ namespace VendorMaintenance
+         {
+             InitializeComponent();
+         }
++        public bool addState;
++        public State state;
+ 
+-        private void frmAddModifyState_Load(object sender, EventArgs e)
++
++        // Check whether the user want to add or modify function, the corresponding add/modify action to the database is carried out
++        private void btnAccept_Click(object sender, EventArgs e)
+         {
++            if (addState)
++            {
++                state = new State();
++                this.PutStateData(state);
++                DataContext.payables.States.InsertOnSubmit(state);
+ 
++                try
++                {
++                    DataContext.payables.SubmitChanges();
++                    this.DialogResult = DialogResult.OK;
++                    MessageBox.Show("State Code " + Convert.ToString(state.StateCode) + " has been added to the State table");
++                }
++                catch (Exception ex)
++                {
++                    MessageBox.Show(ex.Message, ex.GetType().ToString());
++                }
++
++            }
++            else
++            {
++                this.PutStateData(state);
++                try
++                {
++                    DataContext.payables.SubmitChanges();
++                    this.DialogResult = DialogResult.OK;
++                }
++                catch (Exception ex)
++                {
++                    MessageBox.Show(ex.Message, ex.GetType().ToString());
++                }
++            }
+         }
+ 
+-        private void label1_Click(object sender, EventArgs e)
++
++        // assign GLAccount properties through this method
++        private void PutStateData(State state)
+         {
++            state.StateCode = txtCode.Text;
++            state.StateName = txtName.Text;
++            state.FirstZipCode = Int32.Parse(txtFirstZip.Text);
++            state.LastZipCode = Int32.Parse(txtLastZip.Text);
++
+ 
+         }
+ 
+-        private void button1_Click(object sender, EventArgs e)
++        // if not adding a GLAccount display the GLAccount data to screen
++        private void frmAddModifyState_Load(object sender, EventArgs e)
+         {
+ 
++            if (addState != true)
++            {
++                this.DisplayStateData();
++            }
+         }
++
++        private void cmdCancel_Click(object sender, EventArgs e)
++        {
++            this.Hide();
++        }
++
++        private void DisplayStateData()
++        {
++            txtCode.Text = state.StateCode.ToString();
++            txtName.Text = state.StateName;
++            txtFirstZip.Text = state.FirstZipCode.ToString();
++            txtLastZip.Text = state.LastZipCode.ToString();
++        }
++
+     }
+ }
+-- 
+2.11.0.windows.1
+

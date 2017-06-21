@@ -1,0 +1,2487 @@
+From 291b7ad7708114478874ac7ba9b248ae95205db4 Mon Sep 17 00:00:00 2001
+From: Connor <iconnoroneill@gmail.com>
+Date: Mon, 10 Apr 2017 12:50:40 +0930
+Subject: [PATCH 02/17] Commited original student files to master
+
+---
+ ProjectFiles/AboutBox1.cs                     | 123 +++++++
+ ProjectFiles/AboutBox1.designer.cs            | 150 ++++++++
+ ProjectFiles/AboutBox1.resx                   | 120 ++++++
+ ProjectFiles/JuiceBarForm.cs                  | 326 +++++++++++++++++
+ ProjectFiles/JuiceBarForm.designer.cs         | 502 ++++++++++++++++++++++++++
+ ProjectFiles/JuiceBarForm.resx                | 312 ++++++++++++++++
+ ProjectFiles/MyInitial.csproj                 | 178 +++++++++
+ ProjectFiles/MyInitial.sln                    |  20 +
+ ProjectFiles/Program.cs                       |  21 ++
+ ProjectFiles/Properties/AssemblyInfo.cs       |  33 ++
+ ProjectFiles/Properties/Resources.Designer.cs |  63 ++++
+ ProjectFiles/Properties/Resources.resx        | 117 ++++++
+ ProjectFiles/Properties/Settings.Designer.cs  |  26 ++
+ ProjectFiles/Properties/Settings.settings     |   7 +
+ ProjectFiles/SummaryForm.cs                   |  62 ++++
+ ProjectFiles/SummaryForm.designer.cs          | 140 +++++++
+ ProjectFiles/SummaryForm.resx                 | 120 ++++++
+ ProjectFiles/app.config                       |   3 +
+ 18 files changed, 2323 insertions(+)
+ create mode 100644 ProjectFiles/AboutBox1.cs
+ create mode 100644 ProjectFiles/AboutBox1.designer.cs
+ create mode 100644 ProjectFiles/AboutBox1.resx
+ create mode 100644 ProjectFiles/JuiceBarForm.cs
+ create mode 100644 ProjectFiles/JuiceBarForm.designer.cs
+ create mode 100644 ProjectFiles/JuiceBarForm.resx
+ create mode 100644 ProjectFiles/MyInitial.csproj
+ create mode 100644 ProjectFiles/MyInitial.sln
+ create mode 100644 ProjectFiles/Program.cs
+ create mode 100644 ProjectFiles/Properties/AssemblyInfo.cs
+ create mode 100644 ProjectFiles/Properties/Resources.Designer.cs
+ create mode 100644 ProjectFiles/Properties/Resources.resx
+ create mode 100644 ProjectFiles/Properties/Settings.Designer.cs
+ create mode 100644 ProjectFiles/Properties/Settings.settings
+ create mode 100644 ProjectFiles/SummaryForm.cs
+ create mode 100644 ProjectFiles/SummaryForm.designer.cs
+ create mode 100644 ProjectFiles/SummaryForm.resx
+ create mode 100644 ProjectFiles/app.config
+
+diff --git a/ProjectFiles/AboutBox1.cs b/ProjectFiles/AboutBox1.cs
+new file mode 100644
+index 0000000..2b0bbf0
+--- /dev/null
++++ b/ProjectFiles/AboutBox1.cs
+@@ -0,0 +1,123 @@
++
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Drawing;
++using System.Windows.Forms;
++using System.Reflection;
++
++namespace MyNameSpace
++{
++    partial class AboutBox1 : Form
++    {
++        public AboutBox1()
++        {
++            InitializeComponent();
++
++            //  Initialize the AboutBox to display the product information from the assembly information.
++            //  Change assembly information settings for your application through either:
++            //  - Project->Properties->Application->Assembly Information
++            //  - AssemblyInfo.cs
++            this.Text = String.Format("About {0}", AssemblyTitle);
++            this.labelProductName.Text = AssemblyProduct;
++            this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
++            this.labelCopyright.Text = AssemblyCopyright;
++            this.labelCompanyName.Text = AssemblyCompany;
++        }
++
++        #region Assembly Attribute Accessors
++
++        public string AssemblyTitle
++        {
++            get
++            {
++                // Get all Title attributes on this assembly
++                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
++                // If there is at least one Title attribute
++                if (attributes.Length > 0)
++                {
++                    // Select the first one
++                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
++                    // If it is not an empty string, return it
++                    if (titleAttribute.Title != "")
++                        return titleAttribute.Title;
++                }
++                // If there was no Title attribute, or if the Title attribute was the empty string, return the .exe name
++                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
++            }
++        }
++
++        public string AssemblyVersion
++        {
++            get
++            {
++                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
++            }
++        }
++
++        public string AssemblyDescription
++        {
++            get
++            {
++                // Get all Description attributes on this assembly
++                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
++                // If there aren't any Description attributes, return an empty string
++                if (attributes.Length == 0)
++                    return "";
++                // If there is a Description attribute, return its value
++                return ((AssemblyDescriptionAttribute)attributes[0]).Description;
++            }
++        }
++
++        public string AssemblyProduct
++        {
++            get
++            {
++                // Get all Product attributes on this assembly
++                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
++                // If there aren't any Product attributes, return an empty string
++                if (attributes.Length == 0)
++                    return "";
++                // If there is a Product attribute, return its value
++                return ((AssemblyProductAttribute)attributes[0]).Product;
++            }
++        }
++
++        public string AssemblyCopyright
++        {
++            get
++            {
++                // Get all Copyright attributes on this assembly
++                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
++                // If there aren't any Copyright attributes, return an empty string
++                if (attributes.Length == 0)
++                    return "";
++                // If there is a Copyright attribute, return its value
++                return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
++            }
++        }
++
++        public string AssemblyCompany
++        {
++            get
++            {
++                // Get all Company attributes on this assembly
++                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
++                // If there aren't any Company attributes, return an empty string
++                if (attributes.Length == 0)
++                    return "";
++                // If there is a Company attribute, return its value
++                return ((AssemblyCompanyAttribute)attributes[0]).Company;
++            }
++        }
++        #endregion
++
++
++        private void okButton_Click(object sender, EventArgs e)
++        {
++            // Close the summary form.
++
++            this.Close();
++        }
++    }
++}
+diff --git a/ProjectFiles/AboutBox1.designer.cs b/ProjectFiles/AboutBox1.designer.cs
+new file mode 100644
+index 0000000..1963074
+--- /dev/null
++++ b/ProjectFiles/AboutBox1.designer.cs
+@@ -0,0 +1,150 @@
++namespace MyNameSpace
++{
++    partial class AboutBox1
++    {
++        /// <summary>
++        /// Required designer variable.
++        /// </summary>
++        private System.ComponentModel.IContainer components = null;
++
++        /// <summary>
++        /// Clean up any resources being used.
++        /// </summary>
++        protected override void Dispose(bool disposing)
++        {
++            if (disposing && (components != null))
++            {
++                components.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++
++        #region Windows Form Designer generated code
++
++        /// <summary>
++        /// Required method for Designer support - do not modify
++        /// the contents of this method with the code editor.
++        /// </summary>
++        private void InitializeComponent()
++        {
++            this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
++            this.labelProductName = new System.Windows.Forms.Label();
++            this.labelVersion = new System.Windows.Forms.Label();
++            this.labelCopyright = new System.Windows.Forms.Label();
++            this.labelCompanyName = new System.Windows.Forms.Label();
++            this.okButton = new System.Windows.Forms.Button();
++            this.tableLayoutPanel.SuspendLayout();
++            this.SuspendLayout();
++            // 
++            // tableLayoutPanel
++            // 
++            this.tableLayoutPanel.ColumnCount = 2;
++            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
++            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67F));
++            this.tableLayoutPanel.Controls.Add(this.labelProductName, 1, 0);
++            this.tableLayoutPanel.Controls.Add(this.labelVersion, 1, 1);
++            this.tableLayoutPanel.Controls.Add(this.labelCopyright, 1, 2);
++            this.tableLayoutPanel.Controls.Add(this.labelCompanyName, 1, 3);
++            this.tableLayoutPanel.Controls.Add(this.okButton, 1, 5);
++            this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
++            this.tableLayoutPanel.Location = new System.Drawing.Point(9, 9);
++            this.tableLayoutPanel.Name = "tableLayoutPanel";
++            this.tableLayoutPanel.RowCount = 6;
++            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
++            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
++            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
++            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
++            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.81132F));
++            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.9434F));
++            this.tableLayoutPanel.Size = new System.Drawing.Size(417, 265);
++            this.tableLayoutPanel.TabIndex = 0;
++            // 
++            // labelProductName
++            // 
++            this.labelProductName.Dock = System.Windows.Forms.DockStyle.Fill;
++            this.labelProductName.Location = new System.Drawing.Point(143, 0);
++            this.labelProductName.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
++            this.labelProductName.MaximumSize = new System.Drawing.Size(0, 17);
++            this.labelProductName.Name = "labelProductName";
++            this.labelProductName.Size = new System.Drawing.Size(271, 17);
++            this.labelProductName.TabIndex = 19;
++            this.labelProductName.Text = "Product Name";
++            this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
++            // 
++            // labelVersion
++            // 
++            this.labelVersion.Dock = System.Windows.Forms.DockStyle.Fill;
++            this.labelVersion.Location = new System.Drawing.Point(143, 26);
++            this.labelVersion.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
++            this.labelVersion.MaximumSize = new System.Drawing.Size(0, 17);
++            this.labelVersion.Name = "labelVersion";
++            this.labelVersion.Size = new System.Drawing.Size(271, 17);
++            this.labelVersion.TabIndex = 0;
++            this.labelVersion.Text = "Version";
++            this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
++            // 
++            // labelCopyright
++            // 
++            this.labelCopyright.Dock = System.Windows.Forms.DockStyle.Fill;
++            this.labelCopyright.Location = new System.Drawing.Point(143, 52);
++            this.labelCopyright.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
++            this.labelCopyright.MaximumSize = new System.Drawing.Size(0, 17);
++            this.labelCopyright.Name = "labelCopyright";
++            this.labelCopyright.Size = new System.Drawing.Size(271, 17);
++            this.labelCopyright.TabIndex = 21;
++            this.labelCopyright.Text = "Copyright";
++            this.labelCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
++            // 
++            // labelCompanyName
++            // 
++            this.labelCompanyName.Dock = System.Windows.Forms.DockStyle.Fill;
++            this.labelCompanyName.Location = new System.Drawing.Point(143, 78);
++            this.labelCompanyName.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
++            this.labelCompanyName.MaximumSize = new System.Drawing.Size(0, 17);
++            this.labelCompanyName.Name = "labelCompanyName";
++            this.labelCompanyName.Size = new System.Drawing.Size(271, 17);
++            this.labelCompanyName.TabIndex = 22;
++            this.labelCompanyName.Text = "Company Name";
++            this.labelCompanyName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
++            // 
++            // okButton
++            // 
++            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
++            this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
++            this.okButton.Location = new System.Drawing.Point(339, 239);
++            this.okButton.Name = "okButton";
++            this.okButton.Size = new System.Drawing.Size(75, 23);
++            this.okButton.TabIndex = 24;
++            this.okButton.Text = "&OK";
++            this.okButton.Click += new System.EventHandler(this.okButton_Click);
++            // 
++            // AboutBox1
++            // 
++            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
++            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
++            this.ClientSize = new System.Drawing.Size(435, 283);
++            this.Controls.Add(this.tableLayoutPanel);
++            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
++            this.MaximizeBox = false;
++            this.MinimizeBox = false;
++            this.Name = "AboutBox1";
++            this.Padding = new System.Windows.Forms.Padding(9);
++            this.ShowIcon = false;
++            this.ShowInTaskbar = false;
++            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
++            this.Text = "About Look Sharp Fitness Center Juice Bar Sales";
++            this.tableLayoutPanel.ResumeLayout(false);
++            this.ResumeLayout(false);
++
++        }
++
++        #endregion
++
++        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
++        private System.Windows.Forms.Label labelProductName;
++        private System.Windows.Forms.Label labelVersion;
++        private System.Windows.Forms.Label labelCopyright;
++        private System.Windows.Forms.Label labelCompanyName;
++        private System.Windows.Forms.Button okButton;
++    }
++}
+diff --git a/ProjectFiles/AboutBox1.resx b/ProjectFiles/AboutBox1.resx
+new file mode 100644
+index 0000000..19dc0dd
+--- /dev/null
++++ b/ProjectFiles/AboutBox1.resx
+@@ -0,0 +1,120 @@
++<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" use="required" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++</root>
+\ No newline at end of file
+diff --git a/ProjectFiles/JuiceBarForm.cs b/ProjectFiles/JuiceBarForm.cs
+new file mode 100644
+index 0000000..3b760ef
+--- /dev/null
++++ b/ProjectFiles/JuiceBarForm.cs
+@@ -0,0 +1,326 @@
++
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Data;
++using System.Drawing;
++using System.Text;
++using System.Windows.Forms;
++
++namespace MyNameSpace
++{
++    public partial class JuiceBarForm : Form
++    {
++        // Declare class variables.
++        decimal itemSizeDecimal, itemPriceDecimal, totalOrderDecimal, 
++            totalSalesDecimal;
++        int drinkTotalInteger, orderTotalInteger, itemCountInteger;
++        public struct OrderItem
++        {
++            public string sizeString;
++            public string drinkString;
++            public int quantityInteger;
++            public decimal priceDecimal;
++        }
++        // Create an array for the items in the order.
++        OrderItem[] drinkOrder = new OrderItem[20];
++
++        public JuiceBarForm()
++        {
++            InitializeComponent();
++        }
++
++        private void addToOrderButton_Click(object sender, EventArgs e)
++        {
++            // Add the current item price and quantity to the order.
++
++            if (noSizeRadioButton.Checked 
++                || drinkTypeComboBox.SelectedIndex == -1)
++            {
++                MessageBox.Show("You must select a drink and size.", 
++                    "Missing required entry");
++            }
++            else
++            {
++                try
++                {
++                    drinkOrder[itemCountInteger].quantityInteger 
++                        = int.Parse(quantityTextBox.Text);
++                    if (drinkOrder[itemCountInteger].quantityInteger != 0)
++                    {
++                        drinkOrder[itemCountInteger].drinkString 
++                            = drinkTypeComboBox.SelectedItem.ToString();
++                        drinkOrder[itemCountInteger].priceDecimal 
++                            = itemPriceDecimal;
++                        totalOrderDecimal += itemPriceDecimal 
++                            * drinkOrder[itemCountInteger].quantityInteger;
++                        drinkTotalInteger += drinkOrder[itemCountInteger]
++                            .quantityInteger;
++                        clearForNextItem();
++                        orderCompleteButton.Enabled = true;
++                        itemCountInteger++;
++                    }
++                    else
++                    {
++                        MessageBox.Show("Please enter a quantity.", 
++                            "Missing Required Entry");
++                        quantityTextBox.Focus();
++                    }
++                }
++                catch (FormatException)
++                {
++                    MessageBox.Show("Invalid Quantity.", "Data Entry Error");
++                    quantityTextBox.Focus();
++                    quantityTextBox.SelectAll();
++                }
++            }
++        }
++
++        private void orderCompleteButton_Click(object sender, EventArgs e)
++        {
++            // Order is complete, add to summary and clear order.
++
++            // Verify that the last item was added to the total.
++            if (!noSizeRadioButton.Checked 
++                && drinkTypeComboBox.SelectedIndex != -1)
++            {
++                DialogResult responseDialogResult;
++                string messageString = "Current item not recorded. Add to order?";
++                responseDialogResult = MessageBox.Show(messageString,
++                    "Verify Last Drink Purchase", MessageBoxButtons.YesNo,
++                    MessageBoxIcon.Question);
++                if (responseDialogResult == DialogResult.Yes)
++                {
++                    addToOrderButton_Click(sender, e);
++                }
++            }
++            // Display receipt for items purchased in this order.
++            printPreviewDialog1.Document = printDocument1;
++            printPreviewDialog1.ShowDialog();
++
++            // Add to summary totals.
++            orderTotalInteger++;
++            totalSalesDecimal += totalOrderDecimal;
++
++            // Reset all for new order.
++            summaryButton.Enabled = true;
++            summaryToolStripMenuItem.Enabled = true;
++            orderCompleteButton.Enabled = false;
++            orderCompleteToolStripMenuItem.Enabled = false;
++            totalOrderDecimal = 0m;
++            itemCountInteger = 0;
++            // Clear order array.
++            for (int orderInteger = 0; orderInteger < 20; orderInteger++)
++            {
++                drinkOrder[orderInteger].quantityInteger = 0;
++                drinkOrder[orderInteger].priceDecimal = 0;
++                drinkOrder[orderInteger].drinkString = "";
++            }
++        }
++
++        private void summaryButton_Click(object sender, EventArgs e)
++        {
++            // Display the summary information in a summary form.
++
++            // Display the summary form.
++            SummaryForm aSummaryForm = new SummaryForm();
++
++            aSummaryForm.DrinksSold = drinkTotalInteger;
++            aSummaryForm.NumberOrders = orderTotalInteger;
++            aSummaryForm.TotalSales = totalSalesDecimal;
++            aSummaryForm.Show();
++        }
++
++        private void exitButton_Click(object sender, EventArgs e)
++        {
++            // End the application.
++
++            this.Close();
++        }
++
++        private void clearForNextItem()
++        {
++            // Clear option buttons, check boxes, text boxes.
++
++            noSizeRadioButton.Checked = true;
++            drinkTypeComboBox.SelectedIndex = -1;
++            vitaminPackCheckBox.Checked = false;
++            energyBoosterCheckBox.Checked = false;
++            ladiesCheckBox.Checked = false;
++            itemPriceTextBox.Clear();
++            quantityTextBox.Text = "1";
++        }
++
++        private void twelveOunceRadioButton_CheckedChanged(object sender, 
++            EventArgs e)
++        {
++            // Calculate and display the price for the selected item. 
++            // Handles all size radio buttons.
++
++            // Cast the sender to a RadioButton type.
++            RadioButton selectedSizeRadioButton = (RadioButton)sender;
++
++            switch (selectedSizeRadioButton.Name)
++            {
++                case "twelveOunceRadioButton":
++                    itemSizeDecimal = 3m;
++                    drinkOrder[itemCountInteger].sizeString = "12 oz";
++                    break;
++                case "sixteenOunceRadioButton":
++                    itemSizeDecimal = 3.5m;
++                    drinkOrder[itemCountInteger].sizeString = "16 oz";
++                    break;
++                case "twentyOunceRadioButton":
++                    itemSizeDecimal = 4m;
++                    drinkOrder[itemCountInteger].sizeString = "20 oz";
++                    break;
++            }
++            itemPriceDecimal = itemSizeDecimal + findExtrasPrice();
++            itemPriceTextBox.Text = itemPriceDecimal.ToString("C");
++        }
++
++        private decimal findExtrasPrice()
++        {
++            // Find price for additives.
++            decimal extrasDecimal = 0m;
++
++            if (vitaminPackCheckBox.Checked)
++                extrasDecimal += .5m;
++            if (energyBoosterCheckBox.Checked)
++                extrasDecimal += .5m;
++            if (ladiesCheckBox.Checked)
++                extrasDecimal += .5m;
++
++            return extrasDecimal;
++        }
++
++        private void vitaminPackCheckBox_CheckedChanged(object sender, 
++            EventArgs e)
++        {
++            // Check price of additives and display current price.
++
++            drinkOrder[itemCountInteger].priceDecimal 
++                = itemSizeDecimal + findExtrasPrice();
++            itemPriceTextBox.Text = drinkOrder[itemCountInteger]
++                .priceDecimal.ToString("C");
++        }
++
++        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
++        {
++            // Display about form.
++            AboutBox1 aboutForm = new AboutBox1();
++
++            aboutForm.ShowDialog();
++        }
++
++        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
++        {
++            // Change the label's font.
++
++            // Initialize the dialog box.
++            fontDialog1.Font = titleLabel.Font;
++            // Display the dialog box.
++            fontDialog1.ShowDialog();
++            // Assign the new font.
++            titleLabel.Font = fontDialog1.Font;
++        }
++
++        private void colorToolStripMenuItem_Click(object sender, EventArgs e)
++        {
++            // Change the form's ForeColor.
++            // Applies to all conrols on the form that haven't had their
++            //    ForeColor explicitly modified.
++
++            // Initialize the dialog box.
++            colorDialog1.Color = this.ForeColor;
++            // Display the dialog box.
++            colorDialog1.ShowDialog();
++            // Assign the new color.
++            this.ForeColor = colorDialog1.Color;
++        }
++
++        private void printDocument1_PrintPage(object sender,
++            System.Drawing.Printing.PrintPageEventArgs e)
++        {
++            // Display the invoice in a Print Preview dialog box.
++
++            Font printFont = new Font("Arial", 12);
++            Font headingFont = new Font("Arial", 14, FontStyle.Bold);
++            float lineHeightFloat = (float)printFont.GetHeight() + 2f;
++            float column1Float = e.MarginBounds.Left;
++            float yFloat = e.MarginBounds.Top;
++            float column2Float = 200f;
++            float column3Float = 250f;
++            float column4Float = 500f;
++            float column5Float = 600f;
++            string lineString;
++
++            // Set up heading lines.
++            lineString = "Look Sharp Fitness Center";
++            e.Graphics.DrawString(lineString, headingFont, Brushes.Black,
++                column3Float, yFloat);
++            yFloat += (lineHeightFloat * 2);
++            lineString = "Drink Sales Receipt  " + DateTime.Today.ToString("d");
++            e.Graphics.DrawString(lineString, printFont, Brushes.Black,
++                column3Float, yFloat);
++            yFloat += (lineHeightFloat * 2);
++            e.Graphics.DrawString("Quantity", headingFont, Brushes.Black,
++                column1Float, yFloat);
++            e.Graphics.DrawString("Size", headingFont, Brushes.Black,
++                column2Float, yFloat);
++            e.Graphics.DrawString("Drink Type", headingFont, Brushes.Black,
++                column3Float, yFloat);
++            e.Graphics.DrawString("Unit Price", headingFont, Brushes.Black,
++                column4Float, yFloat);
++            e.Graphics.DrawString("Extended Price", headingFont, Brushes.Black,
++                column5Float, yFloat);
++            column5Float += 30;
++            yFloat += (lineHeightFloat * 2);
++
++            // Loop through the transactions.
++            foreach (OrderItem oneOrder in drinkOrder)
++            {
++                // Only print valid orders.
++                if (oneOrder.quantityInteger != 0)
++                {
++                    // Set up a line.
++                    // Quantity.
++                    e.Graphics.DrawString(oneOrder.quantityInteger.ToString(),
++                        printFont, Brushes.Black, column1Float, yFloat);
++
++                    // Size.
++                    e.Graphics.DrawString(oneOrder.sizeString,
++                        printFont, Brushes.Black, column2Float, yFloat);
++
++                    // Drink type.
++                    e.Graphics.DrawString(oneOrder.drinkString, printFont,
++                        Brushes.Black, column3Float, yFloat);
++
++                    // Unit Price.
++                    e.Graphics.DrawString(oneOrder.priceDecimal.ToString("c"),
++                        printFont, Brushes.Black, column4Float, yFloat);
++
++                    // Extended Price.
++                    decimal extendedPriceDecimal = oneOrder.priceDecimal 
++                        * oneOrder.quantityInteger;
++                    e.Graphics.DrawString(extendedPriceDecimal.ToString("c"),
++                        printFont, Brushes.Black, column5Float, yFloat);
++
++                    // Increment the Y position for the next line.
++                    yFloat += (lineHeightFloat * 2);
++                }
++            }
++
++            // Print total.
++            e.Graphics.DrawString("Total: ", headingFont, Brushes.Black, 
++                column1Float, yFloat);
++            e.Graphics.DrawString(totalOrderDecimal.ToString("c"), printFont, 
++                Brushes.Black, column5Float, yFloat);
++        }
++
++        private void groupBox2_Enter(object sender, EventArgs e)
++        {
++
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/ProjectFiles/JuiceBarForm.designer.cs b/ProjectFiles/JuiceBarForm.designer.cs
+new file mode 100644
+index 0000000..7c0acb7
+--- /dev/null
++++ b/ProjectFiles/JuiceBarForm.designer.cs
+@@ -0,0 +1,502 @@
++namespace MyNameSpace
++{
++    partial class JuiceBarForm
++    {
++        /// <summary>
++        /// Required designer variable.
++        /// </summary>
++        private System.ComponentModel.IContainer components = null;
++
++        /// <summary>
++        /// Clean up any resources being used.
++        /// </summary>
++        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
++        protected override void Dispose(bool disposing)
++        {
++            if (disposing && (components != null))
++            {
++                components.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++
++        #region Windows Form Designer generated code
++
++        /// <summary>
++        /// Required method for Designer support - do not modify
++        /// the contents of this method with the code editor.
++        /// </summary>
++        private void InitializeComponent()
++        {
++            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JuiceBarForm));
++            this.groupBox1 = new System.Windows.Forms.GroupBox();
++            this.noSizeRadioButton = new System.Windows.Forms.RadioButton();
++            this.twentyOunceRadioButton = new System.Windows.Forms.RadioButton();
++            this.sixteenOunceRadioButton = new System.Windows.Forms.RadioButton();
++            this.twelveOunceRadioButton = new System.Windows.Forms.RadioButton();
++            this.groupBox3 = new System.Windows.Forms.GroupBox();
++            this.ladiesCheckBox = new System.Windows.Forms.CheckBox();
++            this.energyBoosterCheckBox = new System.Windows.Forms.CheckBox();
++            this.vitaminPackCheckBox = new System.Windows.Forms.CheckBox();
++            this.summaryButton = new System.Windows.Forms.Button();
++            this.orderCompleteButton = new System.Windows.Forms.Button();
++            this.addToOrderButton = new System.Windows.Forms.Button();
++            this.exitButton = new System.Windows.Forms.Button();
++            this.label3 = new System.Windows.Forms.Label();
++            this.itemPriceTextBox = new System.Windows.Forms.TextBox();
++            this.label5 = new System.Windows.Forms.Label();
++            this.quantityTextBox = new System.Windows.Forms.TextBox();
++            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
++            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.summaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.addToOrderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.orderCompleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
++            this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
++            this.fontDialog1 = new System.Windows.Forms.FontDialog();
++            this.titleLabel = new System.Windows.Forms.Label();
++            this.groupBox2 = new System.Windows.Forms.GroupBox();
++            this.drinkTypeComboBox = new System.Windows.Forms.ComboBox();
++            this.printDocument1 = new System.Drawing.Printing.PrintDocument();
++            this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
++            this.groupBox1.SuspendLayout();
++            this.groupBox3.SuspendLayout();
++            this.menuStrip1.SuspendLayout();
++            this.groupBox2.SuspendLayout();
++            this.SuspendLayout();
++            // 
++            // groupBox1
++            // 
++            this.groupBox1.Controls.Add(this.noSizeRadioButton);
++            this.groupBox1.Controls.Add(this.twentyOunceRadioButton);
++            this.groupBox1.Controls.Add(this.sixteenOunceRadioButton);
++            this.groupBox1.Controls.Add(this.twelveOunceRadioButton);
++            this.groupBox1.Location = new System.Drawing.Point(16, 81);
++            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.groupBox1.Name = "groupBox1";
++            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.groupBox1.Size = new System.Drawing.Size(245, 123);
++            this.groupBox1.TabIndex = 0;
++            this.groupBox1.TabStop = false;
++            this.groupBox1.Text = "Size";
++            // 
++            // noSizeRadioButton
++            // 
++            this.noSizeRadioButton.AutoSize = true;
++            this.noSizeRadioButton.Checked = true;
++            this.noSizeRadioButton.Location = new System.Drawing.Point(132, 100);
++            this.noSizeRadioButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.noSizeRadioButton.Name = "noSizeRadioButton";
++            this.noSizeRadioButton.Size = new System.Drawing.Size(79, 21);
++            this.noSizeRadioButton.TabIndex = 3;
++            this.noSizeRadioButton.TabStop = true;
++            this.noSizeRadioButton.Text = "invisible";
++            this.noSizeRadioButton.UseVisualStyleBackColor = true;
++            this.noSizeRadioButton.Visible = false;
++            // 
++            // twentyOunceRadioButton
++            // 
++            this.twentyOunceRadioButton.AutoSize = true;
++            this.twentyOunceRadioButton.Location = new System.Drawing.Point(16, 81);
++            this.twentyOunceRadioButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.twentyOunceRadioButton.Name = "twentyOunceRadioButton";
++            this.twentyOunceRadioButton.Size = new System.Drawing.Size(123, 21);
++            this.twentyOunceRadioButton.TabIndex = 2;
++            this.twentyOunceRadioButton.Text = "&20 Ounce 4.00";
++            this.twentyOunceRadioButton.UseVisualStyleBackColor = true;
++            this.twentyOunceRadioButton.CheckedChanged += new System.EventHandler(this.twelveOunceRadioButton_CheckedChanged);
++            // 
++            // sixteenOunceRadioButton
++            // 
++            this.sixteenOunceRadioButton.AutoSize = true;
++            this.sixteenOunceRadioButton.Location = new System.Drawing.Point(16, 53);
++            this.sixteenOunceRadioButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.sixteenOunceRadioButton.Name = "sixteenOunceRadioButton";
++            this.sixteenOunceRadioButton.Size = new System.Drawing.Size(123, 21);
++            this.sixteenOunceRadioButton.TabIndex = 1;
++            this.sixteenOunceRadioButton.Text = "&16 Ounce 3.50";
++            this.sixteenOunceRadioButton.UseVisualStyleBackColor = true;
++            this.sixteenOunceRadioButton.CheckedChanged += new System.EventHandler(this.twelveOunceRadioButton_CheckedChanged);
++            // 
++            // twelveOunceRadioButton
++            // 
++            this.twelveOunceRadioButton.AutoSize = true;
++            this.twelveOunceRadioButton.Location = new System.Drawing.Point(16, 23);
++            this.twelveOunceRadioButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.twelveOunceRadioButton.Name = "twelveOunceRadioButton";
++            this.twelveOunceRadioButton.Size = new System.Drawing.Size(123, 21);
++            this.twelveOunceRadioButton.TabIndex = 0;
++            this.twelveOunceRadioButton.Text = "12 &Ounce 3.00";
++            this.twelveOunceRadioButton.UseVisualStyleBackColor = true;
++            this.twelveOunceRadioButton.CheckedChanged += new System.EventHandler(this.twelveOunceRadioButton_CheckedChanged);
++            // 
++            // groupBox3
++            // 
++            this.groupBox3.Controls.Add(this.ladiesCheckBox);
++            this.groupBox3.Controls.Add(this.energyBoosterCheckBox);
++            this.groupBox3.Controls.Add(this.vitaminPackCheckBox);
++            this.groupBox3.Location = new System.Drawing.Point(16, 217);
++            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.groupBox3.Name = "groupBox3";
++            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.groupBox3.Size = new System.Drawing.Size(245, 123);
++            this.groupBox3.TabIndex = 1;
++            this.groupBox3.TabStop = false;
++            this.groupBox3.Text = "Extras - $0.50 each";
++            // 
++            // ladiesCheckBox
++            // 
++            this.ladiesCheckBox.AutoSize = true;
++            this.ladiesCheckBox.Location = new System.Drawing.Point(16, 84);
++            this.ladiesCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.ladiesCheckBox.Name = "ladiesCheckBox";
++            this.ladiesCheckBox.Size = new System.Drawing.Size(121, 21);
++            this.ladiesCheckBox.TabIndex = 2;
++            this.ladiesCheckBox.Text = "For the &Ladies";
++            this.ladiesCheckBox.UseVisualStyleBackColor = true;
++            this.ladiesCheckBox.CheckedChanged += new System.EventHandler(this.vitaminPackCheckBox_CheckedChanged);
++            // 
++            // energyBoosterCheckBox
++            // 
++            this.energyBoosterCheckBox.AutoSize = true;
++            this.energyBoosterCheckBox.Location = new System.Drawing.Point(16, 55);
++            this.energyBoosterCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.energyBoosterCheckBox.Name = "energyBoosterCheckBox";
++            this.energyBoosterCheckBox.Size = new System.Drawing.Size(128, 21);
++            this.energyBoosterCheckBox.TabIndex = 1;
++            this.energyBoosterCheckBox.Text = "Energy &Booster";
++            this.energyBoosterCheckBox.UseVisualStyleBackColor = true;
++            this.energyBoosterCheckBox.CheckedChanged += new System.EventHandler(this.vitaminPackCheckBox_CheckedChanged);
++            // 
++            // vitaminPackCheckBox
++            // 
++            this.vitaminPackCheckBox.AutoSize = true;
++            this.vitaminPackCheckBox.Location = new System.Drawing.Point(16, 27);
++            this.vitaminPackCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.vitaminPackCheckBox.Name = "vitaminPackCheckBox";
++            this.vitaminPackCheckBox.Size = new System.Drawing.Size(111, 21);
++            this.vitaminPackCheckBox.TabIndex = 0;
++            this.vitaminPackCheckBox.Text = "&Vitamin Pack";
++            this.vitaminPackCheckBox.UseVisualStyleBackColor = true;
++            this.vitaminPackCheckBox.CheckedChanged += new System.EventHandler(this.vitaminPackCheckBox_CheckedChanged);
++            // 
++            // summaryButton
++            // 
++            this.summaryButton.Enabled = false;
++            this.summaryButton.Location = new System.Drawing.Point(604, 264);
++            this.summaryButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.summaryButton.Name = "summaryButton";
++            this.summaryButton.Size = new System.Drawing.Size(144, 34);
++            this.summaryButton.TabIndex = 9;
++            this.summaryButton.Text = "Summary &Report";
++            this.summaryButton.UseVisualStyleBackColor = true;
++            this.summaryButton.Click += new System.EventHandler(this.summaryButton_Click);
++            // 
++            // orderCompleteButton
++            // 
++            this.orderCompleteButton.Enabled = false;
++            this.orderCompleteButton.Location = new System.Drawing.Point(604, 222);
++            this.orderCompleteButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.orderCompleteButton.Name = "orderCompleteButton";
++            this.orderCompleteButton.Size = new System.Drawing.Size(144, 34);
++            this.orderCompleteButton.TabIndex = 8;
++            this.orderCompleteButton.Text = "Order &Complete";
++            this.orderCompleteButton.UseVisualStyleBackColor = true;
++            this.orderCompleteButton.Click += new System.EventHandler(this.orderCompleteButton_Click);
++            // 
++            // addToOrderButton
++            // 
++            this.addToOrderButton.Location = new System.Drawing.Point(604, 176);
++            this.addToOrderButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.addToOrderButton.Name = "addToOrderButton";
++            this.addToOrderButton.Size = new System.Drawing.Size(144, 34);
++            this.addToOrderButton.TabIndex = 7;
++            this.addToOrderButton.Text = "&Add to Order";
++            this.addToOrderButton.UseVisualStyleBackColor = true;
++            this.addToOrderButton.Click += new System.EventHandler(this.addToOrderButton_Click);
++            // 
++            // exitButton
++            // 
++            this.exitButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
++            this.exitButton.Location = new System.Drawing.Point(604, 306);
++            this.exitButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.exitButton.Name = "exitButton";
++            this.exitButton.Size = new System.Drawing.Size(144, 34);
++            this.exitButton.TabIndex = 10;
++            this.exitButton.Text = "E&xit";
++            this.exitButton.UseVisualStyleBackColor = true;
++            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
++            // 
++            // label3
++            // 
++            this.label3.AutoSize = true;
++            this.label3.Location = new System.Drawing.Point(535, 126);
++            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.label3.Name = "label3";
++            this.label3.Size = new System.Drawing.Size(70, 17);
++            this.label3.TabIndex = 5;
++            this.label3.Text = "Item Price";
++            // 
++            // itemPriceTextBox
++            // 
++            this.itemPriceTextBox.Location = new System.Drawing.Point(615, 122);
++            this.itemPriceTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.itemPriceTextBox.Name = "itemPriceTextBox";
++            this.itemPriceTextBox.ReadOnly = true;
++            this.itemPriceTextBox.Size = new System.Drawing.Size(132, 22);
++            this.itemPriceTextBox.TabIndex = 6;
++            this.itemPriceTextBox.TabStop = false;
++            // 
++            // label5
++            // 
++            this.label5.AutoSize = true;
++            this.label5.Location = new System.Drawing.Point(535, 87);
++            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.label5.Name = "label5";
++            this.label5.Size = new System.Drawing.Size(61, 17);
++            this.label5.TabIndex = 3;
++            this.label5.Text = "&Quantity";
++            // 
++            // quantityTextBox
++            // 
++            this.quantityTextBox.Location = new System.Drawing.Point(615, 84);
++            this.quantityTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.quantityTextBox.Name = "quantityTextBox";
++            this.quantityTextBox.Size = new System.Drawing.Size(31, 22);
++            this.quantityTextBox.TabIndex = 4;
++            this.quantityTextBox.Text = "1";
++            // 
++            // menuStrip1
++            // 
++            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
++            this.fileToolStripMenuItem,
++            this.editToolStripMenuItem,
++            this.helpToolStripMenuItem});
++            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
++            this.menuStrip1.Name = "menuStrip1";
++            this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
++            this.menuStrip1.Size = new System.Drawing.Size(781, 28);
++            this.menuStrip1.TabIndex = 11;
++            this.menuStrip1.Text = "menuStrip1";
++            // 
++            // fileToolStripMenuItem
++            // 
++            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++            this.summaryToolStripMenuItem,
++            this.exitToolStripMenuItem});
++            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
++            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
++            this.fileToolStripMenuItem.Text = "&File";
++            // 
++            // summaryToolStripMenuItem
++            // 
++            this.summaryToolStripMenuItem.Enabled = false;
++            this.summaryToolStripMenuItem.Name = "summaryToolStripMenuItem";
++            this.summaryToolStripMenuItem.Size = new System.Drawing.Size(140, 24);
++            this.summaryToolStripMenuItem.Text = "&Summary";
++            this.summaryToolStripMenuItem.Click += new System.EventHandler(this.summaryButton_Click);
++            // 
++            // exitToolStripMenuItem
++            // 
++            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
++            this.exitToolStripMenuItem.Size = new System.Drawing.Size(140, 24);
++            this.exitToolStripMenuItem.Text = "E&xit";
++            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitButton_Click);
++            // 
++            // editToolStripMenuItem
++            // 
++            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++            this.addToOrderToolStripMenuItem,
++            this.orderCompleteToolStripMenuItem,
++            this.toolStripMenuItem1,
++            this.fontToolStripMenuItem,
++            this.colorToolStripMenuItem});
++            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
++            this.editToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
++            this.editToolStripMenuItem.Text = "&Edit";
++            // 
++            // addToOrderToolStripMenuItem
++            // 
++            this.addToOrderToolStripMenuItem.Name = "addToOrderToolStripMenuItem";
++            this.addToOrderToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
++            this.addToOrderToolStripMenuItem.Text = "&Add to Order";
++            this.addToOrderToolStripMenuItem.Click += new System.EventHandler(this.addToOrderButton_Click);
++            // 
++            // orderCompleteToolStripMenuItem
++            // 
++            this.orderCompleteToolStripMenuItem.Enabled = false;
++            this.orderCompleteToolStripMenuItem.Name = "orderCompleteToolStripMenuItem";
++            this.orderCompleteToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
++            this.orderCompleteToolStripMenuItem.Text = "&Order Complete";
++            // 
++            // toolStripMenuItem1
++            // 
++            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
++            this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 6);
++            // 
++            // fontToolStripMenuItem
++            // 
++            this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
++            this.fontToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
++            this.fontToolStripMenuItem.Text = "&Font...";
++            this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
++            // 
++            // colorToolStripMenuItem
++            // 
++            this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
++            this.colorToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
++            this.colorToolStripMenuItem.Text = "&Color...";
++            this.colorToolStripMenuItem.Click += new System.EventHandler(this.colorToolStripMenuItem_Click);
++            // 
++            // helpToolStripMenuItem
++            // 
++            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++            this.aboutToolStripMenuItem});
++            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
++            this.helpToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
++            this.helpToolStripMenuItem.Text = "&Help";
++            // 
++            // aboutToolStripMenuItem
++            // 
++            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
++            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(119, 24);
++            this.aboutToolStripMenuItem.Text = "&About";
++            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
++            // 
++            // titleLabel
++            // 
++            this.titleLabel.AutoSize = true;
++            this.titleLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
++            this.titleLabel.Location = new System.Drawing.Point(249, 46);
++            this.titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.titleLabel.Name = "titleLabel";
++            this.titleLabel.Size = new System.Drawing.Size(270, 25);
++            this.titleLabel.TabIndex = 12;
++            this.titleLabel.Text = "Look Sharp Fitness Center";
++            // 
++            // groupBox2
++            // 
++            this.groupBox2.Controls.Add(this.drinkTypeComboBox);
++            this.groupBox2.Location = new System.Drawing.Point(281, 84);
++            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.groupBox2.Name = "groupBox2";
++            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.groupBox2.Size = new System.Drawing.Size(239, 256);
++            this.groupBox2.TabIndex = 2;
++            this.groupBox2.TabStop = false;
++            this.groupBox2.Text = "Select the drink type";
++            this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
++            // 
++            // drinkTypeComboBox
++            // 
++            this.drinkTypeComboBox.FormattingEnabled = true;
++            this.drinkTypeComboBox.Items.AddRange(new object[] {
++            "Fruit juice",
++            "Veggie juice",
++            "Pomegranate smoothie",
++            "Strawberry banana smoothie",
++            "WheatBerry smoothie"});
++            this.drinkTypeComboBox.Location = new System.Drawing.Point(9, 38);
++            this.drinkTypeComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.drinkTypeComboBox.Name = "drinkTypeComboBox";
++            this.drinkTypeComboBox.Size = new System.Drawing.Size(220, 24);
++            this.drinkTypeComboBox.TabIndex = 0;
++            // 
++            // printDocument1
++            // 
++            this.printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument1_PrintPage);
++            // 
++            // printPreviewDialog1
++            // 
++            this.printPreviewDialog1.AutoScrollMargin = new System.Drawing.Size(0, 0);
++            this.printPreviewDialog1.AutoScrollMinSize = new System.Drawing.Size(0, 0);
++            this.printPreviewDialog1.ClientSize = new System.Drawing.Size(400, 300);
++            this.printPreviewDialog1.Enabled = true;
++            this.printPreviewDialog1.Icon = ((System.Drawing.Icon)(resources.GetObject("printPreviewDialog1.Icon")));
++            this.printPreviewDialog1.Name = "printPreviewDialog1";
++            this.printPreviewDialog1.Visible = false;
++            // 
++            // JuiceBarForm
++            // 
++            this.AcceptButton = this.addToOrderButton;
++            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
++            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
++            this.CancelButton = this.exitButton;
++            this.ClientSize = new System.Drawing.Size(781, 369);
++            this.Controls.Add(this.titleLabel);
++            this.Controls.Add(this.quantityTextBox);
++            this.Controls.Add(this.label5);
++            this.Controls.Add(this.itemPriceTextBox);
++            this.Controls.Add(this.label3);
++            this.Controls.Add(this.exitButton);
++            this.Controls.Add(this.addToOrderButton);
++            this.Controls.Add(this.orderCompleteButton);
++            this.Controls.Add(this.summaryButton);
++            this.Controls.Add(this.groupBox3);
++            this.Controls.Add(this.groupBox2);
++            this.Controls.Add(this.groupBox1);
++            this.Controls.Add(this.menuStrip1);
++            this.MainMenuStrip = this.menuStrip1;
++            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.Name = "JuiceBarForm";
++            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
++            this.Text = "Juice Bar Orders";
++            this.groupBox1.ResumeLayout(false);
++            this.groupBox1.PerformLayout();
++            this.groupBox3.ResumeLayout(false);
++            this.groupBox3.PerformLayout();
++            this.menuStrip1.ResumeLayout(false);
++            this.menuStrip1.PerformLayout();
++            this.groupBox2.ResumeLayout(false);
++            this.ResumeLayout(false);
++            this.PerformLayout();
++
++        }
++
++        #endregion
++
++        private System.Windows.Forms.GroupBox groupBox1;
++        private System.Windows.Forms.RadioButton twentyOunceRadioButton;
++        private System.Windows.Forms.RadioButton sixteenOunceRadioButton;
++        private System.Windows.Forms.RadioButton twelveOunceRadioButton;
++        private System.Windows.Forms.GroupBox groupBox3;
++        private System.Windows.Forms.CheckBox ladiesCheckBox;
++        private System.Windows.Forms.CheckBox energyBoosterCheckBox;
++        private System.Windows.Forms.CheckBox vitaminPackCheckBox;
++        private System.Windows.Forms.Button summaryButton;
++        private System.Windows.Forms.Button orderCompleteButton;
++        private System.Windows.Forms.Button addToOrderButton;
++        private System.Windows.Forms.Button exitButton;
++        private System.Windows.Forms.Label label3;
++        private System.Windows.Forms.TextBox itemPriceTextBox;
++        private System.Windows.Forms.Label label5;
++        private System.Windows.Forms.TextBox quantityTextBox;
++        private System.Windows.Forms.RadioButton noSizeRadioButton;
++        private System.Windows.Forms.MenuStrip menuStrip1;
++        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
++        private System.Windows.Forms.ToolStripMenuItem summaryToolStripMenuItem;
++        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
++        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
++        private System.Windows.Forms.ToolStripMenuItem addToOrderToolStripMenuItem;
++        private System.Windows.Forms.ToolStripMenuItem orderCompleteToolStripMenuItem;
++        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
++        private System.Windows.Forms.ToolStripMenuItem fontToolStripMenuItem;
++        private System.Windows.Forms.ToolStripMenuItem colorToolStripMenuItem;
++        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
++        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
++        private System.Windows.Forms.ColorDialog colorDialog1;
++        private System.Windows.Forms.FontDialog fontDialog1;
++        private System.Windows.Forms.Label titleLabel;
++        private System.Windows.Forms.GroupBox groupBox2;
++        private System.Windows.Forms.ComboBox drinkTypeComboBox;
++        private System.Drawing.Printing.PrintDocument printDocument1;
++        private System.Windows.Forms.PrintPreviewDialog printPreviewDialog1;
++    }
++}
++
+diff --git a/ProjectFiles/JuiceBarForm.resx b/ProjectFiles/JuiceBarForm.resx
+new file mode 100644
+index 0000000..70a4ffe
+--- /dev/null
++++ b/ProjectFiles/JuiceBarForm.resx
+@@ -0,0 +1,312 @@
++<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" use="required" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
++    <value>17, 17</value>
++  </metadata>
++  <metadata name="colorDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
++    <value>126, 17</value>
++  </metadata>
++  <metadata name="fontDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
++    <value>239, 17</value>
++  </metadata>
++  <metadata name="printDocument1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
++    <value>347, 17</value>
++  </metadata>
++  <metadata name="printPreviewDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
++    <value>478, 17</value>
++  </metadata>
++  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
++  <data name="printPreviewDialog1.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        AAABAAYAICAQAAAAAADoAgAAZgAAABAQEAAAAAAAKAEAAE4DAAAgIAAAAQAIAKgIAAB2BAAAEBAAAAEA
++        CABoBQAAHg0AACAgAAABACAAqBAAAIYSAAAQEAAAAQAgAGgEAAAuIwAAKAAAACAAAABAAAAAAQAEAAAA
++        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAACAgACAAAAAgACAAICAAACAgIAAwMDAAAAA
++        /wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIoiI
++        iIiIiIiIiIiIiIiIiIiCIigiIiIozMzMzMzMyCIogiIoIiIiKM7m5ubm5sgiKIIiKCIiIijObm5ubm7I
++        IiiCIigiIiIozubm5ubmyCIogiIoIiIiKM5ubm5ubsgiKIIiKCIiIijO5ubm5ubIIiiIiIiIiIiIzm5u
++        bm5uyCIogRERERERGM7u7u7u7sgiKIHZWVlZWRjMzMzMzMzIIiiB1ZWVlZUYiIiIiIiIiIiIgdlZWVlZ
++        GDMzMzMzMzMzOIHVlZWVlRg/uLi4uLi4uDiB2VlZWVkYP7uLi4uLi4s4gdWVlZWVGD+4uLi4uLi4OIHZ
++        WVlZWRg/u4uLi4uLiziB1ZWVlZUYP7i4uLi4uLg4gdlZWVlZGD+7i4uLi4uLOIHVlZWVlRg/uLi4uLi4
++        uDiB3d3d3d0YP7uLi4uLi4s4gRERERERGD+4uLi4uLi4OIiIiIiIiIg/u4uLi4uLiziCIiIiIiIoP7i4
++        uLi4uLg4giIiIiIiKD+7i4uLi4uLOIIiIiIiIig/uLi4uLi4uDiCIiIiIiIoP7u7u7u7u7s4giIiIiIi
++        KD//////////OIIiIiIiIigzMzMzMzMzMziIiIiIiIiIiIiIiIiIiIiIIiIiIiIiIiIiIiIiIiIiIv//
++        ////////AAAAAHv4AA57+AAOe/gADnv4AA57+AAOe/gADgAAAA4AAAAOAAAADgAAAAAAAAAAAAAAAAAA
++        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH/4AAB/+AAAf/gAAH/4AAB/+AAAf/gAAAAA
++        AAD/////KAAAABAAAAAgAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAACA
++        gACAAAAAgACAAICAAACAgIAAwMDAAAAA/wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAiIiIiIiIiIoiI
++        iIiIiIiIgigijMzMyCiCKCKM5mbIKIiIiIzu7sgogRERjMzMyCiB2ZGIiIiIiIHZkYMzMzM4gdmRg/u7
++        uziB3dGD+7u7OIEREYP7u7s4iIiIg/u7uziCIiKD+7u7OIIiIoP///84giIigzMzMziIiIiIiIiIiP//
++        KCIAACjObALm5mwCIigAAoiIAAKIzgAAbm4AACIoAAAREQAAGM4AAO7uAAAiKHwAWVl8ABjMfADMzAAA
++        IigoAAAAIAAAAEAAAAABAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAA
++        AACAAIAAgIAAAICAgADA3MAA8MqmAKo/KgD/PyoAAF8qAFVfKgCqXyoA/18qAAB/KgBVfyoAqn8qAP9/
++        KgAAnyoAVZ8qAKqfKgD/nyoAAL8qAFW/KgCqvyoA/78qAADfKgBV3yoAqt8qAP/fKgAA/yoAVf8qAKr/
++        KgD//yoAAABVAFUAVQCqAFUA/wBVAAAfVQBVH1UAqh9VAP8fVQAAP1UAVT9VAKo/VQD/P1UAAF9VAFVf
++        VQCqX1UA/19VAAB/VQBVf1UAqn9VAP9/VQAAn1UAVZ9VAKqfVQD/n1UAAL9VAFW/VQCqv1UA/79VAADf
++        VQBV31UAqt9VAP/fVQAA/1UAVf9VAKr/VQD//1UAAAB/AFUAfwCqAH8A/wB/AAAffwBVH38Aqh9/AP8f
++        fwAAP38AVT9/AKo/fwD/P38AAF9/AFVffwCqX38A/19/AAB/fwBVf38Aqn9/AP9/fwAAn38AVZ9/AKqf
++        fwD/n38AAL9/AFW/fwCqv38A/79/AADffwBV338Aqt9/AP/ffwAA/38AVf9/AKr/fwD//38AAACqAFUA
++        qgCqAKoA/wCqAAAfqgBVH6oAqh+qAP8fqgAAP6oAVT+qAKo/qgD/P6oAAF+qAFVfqgCqX6oA/1+qAAB/
++        qgBVf6oAqn+qAP9/qgAAn6oAVZ+qAKqfqgD/n6oAAL+qAFW/qgCqv6oA/7+qAADfqgBV36oAqt+qAP/f
++        qgAA/6oAVf+qAKr/qgD//6oAAADUAFUA1ACqANQA/wDUAAAf1ABVH9QAqh/UAP8f1AAAP9QAVT/UAKo/
++        1AD/P9QAAF/UAFVf1ACqX9QA/1/UAAB/1ABVf9QAqn/UAP9/1AAAn9QAVZ/UAKqf1AD/n9QAAL/UAFW/
++        1ACqv9QA/7/UAADf1ABV39QAqt/UAP/f1AAA/9QAVf/UAKr/1AD//9QAVQD/AKoA/wAAH/8AVR//AKof
++        /wD/H/8AAD//AFU//wCqP/8A/z//AABf/wBVX/8Aql//AP9f/wAAf/8AVX//AKp//wD/f/8AAJ//AFWf
++        /wCqn/8A/5//AAC//wBVv/8Aqr//AP+//wAA3/8AVd//AKrf/wD/3/8AVf//AKr//wD/zMwA/8z/AP//
++        MwD//2YA//+ZAP//zAAAfwAAVX8AAKp/AAD/fwAAAJ8AAFWfAACqnwAA/58AAAC/AABVvwAAqr8AAP+/
++        AAAA3wAAVd8AAKrfAAD/3wAAVf8AAKr/AAAAACoAVQAqAKoAKgD/ACoAAB8qAFUfKgCqHyoA/x8qAAA/
++        KgBVPyoA8Pv/AKSgoACAgIAAAAD/AAD/AAAA//8A/wAAAAAAAAD//wAA////AP39/f39/f39/f39/f39
++        /f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39
++        /f39/f39/f39/f39/f39/f39/f39/f39qoYIqoYIhqoIqgiqCaoIqgiqhqqGhoYIhoYIqv39/f0I/f39
++        /ar9/f39/YY2Ng4yDg4ODgoOCgoKCgqG/f39/Yb9/f39CP39/f39qjY7Ozs3Nzc3NjMSMjIOCqr9/f39
++        qv39/f2G/f39/f0IN19fOzs3Nzc3NjcODg4KCP39/f0I/f39/ar9/f39/ao6X19fXzs7Ozc3NzY3NgqG
++        /f39/Yb9/f39CP39/f39hl9jY19jX187Ozs7Nzc3Dqr9/f39qv39/f2G/f39/f0IOodjh19jX19fXztf
++        OzcOCP39/f0ICAmqCAiqCKoICapfCYdjh2ODY19fXzs7Ow6q/f39/QhITEwoSCUoKSQoqmMJCYcJCWNj
++        Y2NfY19fNgj9/f39qkyZmZmYmJRwlCmqX19fXl9fX186WzY3Njc2gv39/f0JcJ2dmZmZlJmUJAmqCaoJ
++        hggIqggICKoIqggI/f39/YZwnp2dnZmZmJVMqnx8fHx8fFR8VHhUVFRUVKr9/f39CHChoZ2dnZ2ZmUwJ
++        fKSkxqSkxqSkpKSkpKBUCP39/f2qcKLDoqGdnZ2ZTKp8ysakxqSkxqSkxqSkpFSq/f39/QiUpqbDoqHE
++        nZ1Mq3ykqMakyqSkxqSkpKSkVAj9/f39hpTIyKbHoqGhoXAIfMrLpMqkxqSkxqTGpKRUqv39/f0IlMym
++        yKbIpcShcAh8y6jKpMqkxsqkpKSkxlQI/f39/aqUzMzMyKbIpqJwqnzLy8qpxsqkpMakxqSkeAj9/f39
++        CJSUlJSUlJSUlJQJgMupy8qpysqkyqSkxqRUqv39/f2GCKoIqgiqCKoIhgigrcvPqcuoy8qkxsqkxnyG
++        /f39/ar9/f39/f39/f39qnzPz6nLy8uoyqnKpKTKVAj9/f39CP39/f39/f39/f0IfNDPz8+py8upyqjG
++        yqR8hv39/f2G/f39/f39/f39/Qik0K7P0M+ty8vLy6jKpXyq/f39/ar9/f39/f39/f39CHzQ09Ctz8/P
++        qcupy6jKeAj9/f39CP39/f39/f39/f2qoNPQ0NPQ0M/Qz8vLy6l8CP39/f2G/f39/f39/f39/QmkfKR8
++        oHx8fHx8fHx8fHyG/f39/aoIqgiqCKoIqgiqCKoIqgiqCKoIqgiqCKoIqgj9/f39/f39/f39/f39/f39
++        /f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f3/////////////
++        ///AAAAD3vgAA974AAPe+AAD3vgAA974AAPe+AADwAAAA8AAAAPAAAADwAAAA8AAAAPAAAADwAAAA8AA
++        AAPAAAADwAAAA8AAAAPAAAADwAAAA9/4AAPf+AAD3/gAA9/4AAPf+AAD3/gAA8AAAAP//////////ygA
++        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
++        ff//p3f//6Jw//+eav//mWT//pRf//qQWv/0i1b/7IVS/+V/Tv+gWC7/wr/B/wAAAAAAAAAAAAAAAAAA
++        AADCv8H/AAAAAAAAAAAAAAAAAAAAAMK/wf8AAAAAAAAAAAAAAAAAAAAAAAAAAMK/wf/apnP//7+d//+7
++        mP//uJL//7WM//+whv//rH///6d4//+jcf//n2v//5ll//+VYP/6kVv/9YxY/6diN//Cv8H/AAAAAAAA
++        AAAAAAAAAAAAAMK/wf/Cv8H/wr/B/8K/wf/Cv8H/wr/B/8K/wf/Cv8H/wr/B/8K/wf/Cv8H/wr/B/96t
++        eP//wqL//8Gi//+/nv//vJn//7mT//+2jv//sYj//66A//+pev//pHP//6Bt//+bZ///l2L/r20//8K/
++        wf8AAAAAAAAAAAAAAAAAAAAAwr/B/xYXev8XF3b/GBVx/xkUbf8ZFGr/GhNm/xoSY/8bEV//HBFd/xwQ
++        W//Cv8H/4K96///Cov//wqL//8Ki///Cov//wJ///72b//+6lf//t4///7KJ//+ugv//qnv//6V0//+h
++        bv+3d0n/wr/B/wAAAAAAAAAAAAAAAAAAAADCv8H/FRqE/0dN1v8/RNL/Nz3Q/y40zv8nLcz/ISfK/xwh
++        yf8WHMf/GxJh/8K/wf/gr3r/4K96/+Cvev/gr3r/3614/9yqdf/apnL/16Nw/9Sea//Rmmj/zZZk/8qR
++        X//GjFz/w4dW/7+CUv/Cv8H/AAAAAAAAAAAAAAAAAAAAAMK/wf8SHZD/WF3a/05U1/9FS9X/PUPS/zU7
++        0P8uM83/JyzL/yAmyf8aFGn/wr/B/8K/wf/Cv8H/wr/B/8K/wf/Cv8H/wr/B/8K/wf/Cv8H/wr/B/8K/
++        wf/Cv8H/wr/B/8K/wf/Cv8H/wr/B/8K/wf8AAAAAAAAAAAAAAAAAAAAAwr/B/xAfnP9obt7/YGTc/1Zb
++        2f9NU9f/RUrU/ztB0v80OdD/LDHO/xgWcv/Cv8H/Dn+n/w18pP8MeqH/DHie/wt1m/8Kc5j/CXGV/wlv
++        k/8JbJD/CGqN/wdpi/8HZ4j/BmWH/wZkhf8GYoP/wr/B/wAAAAAAAAAAAAAAAAAAAADCv8H/DiKp/3l+
++        4/9vdeH/Zmze/11i2/9UWtn/S1HW/0NI1P86P9H/Fhh9/8K/wf8Ogar/Barp/wGo6P8Apef/AKPm/wCi
++        5P8An+L/AJ7h/wCd3/8AnN7/AJnc/wCY2/8AmNn/AJbX/wZjhP/Cv8H/AAAAAAAAAAAAAAAAAAAAAMK/
++        wf8MJbX/iI7n/4CF5v93fOP/bnPg/2Vr3f9bYdv/UljY/0lP1v8UGoj/wr/B/w+Erf8Lrur/Bqvq/wOo
++        6f8Apuf/AKTm/wCi5f8AoOT/AJ/i/wCd4f8AnN//AJrd/wCZ2/8AmNr/BmWH/8K/wf8AAAAAAAAAAAAA
++        AAAAAAAAwr/B/wkowP+WnOz/jpTq/4aL6P9+hOX/dXri/2xx4P9jaN3/WV/b/xEek//Cv8H/EIaw/xay
++        7P8Or+z/Cavr/wWq6v8Bp+j/AKbn/wCj5f8AoeT/AJ/j/wCe4f8AnOD/AJve/wCa3f8HZ4n/wr/B/wAA
++        AAAAAAAAAAAAAAAAAADCv8H/CCrK/6Ko7/+coe7/lZrr/42T6f+Fiub/fIHl/3N54v9rcN//ECGg/8K/
++        wf8QiLP/I7nu/xq07f8Ssez/C63r/war6v8Cqen/AKbo/wCk5v8AouX/AKHk/wCf4f8AneH/AJzf/who
++        i//Cv8H/AAAAAAAAAAAAAAAAAAAAAMK/wf8GLNP/q7Hy/6as8P+hpu//mp/u/5OY6/+LkOj/g4nm/3qA
++        5P8NI6z/wr/B/xCKtv8xvvD/J7rv/x627f8Vsuz/Dq/s/wmr6/8Equn/Aafo/wCl5/8Ao+X/AKHk/wCf
++        4v8AnuH/CGqO/8K/wf8AAAAAAAAAAAAAAAAAAAAAwr/B/wUu2/+vtPP/r7Tz/6qv8v+mq/D/oKXv/5me
++        7f+Sl+v/io/p/wsmt//Cv8H/Eo24/0HF8f82wfD/LLzv/yK47v8atO3/EbHs/wut6/8Gq+r/A6np/wCm
++        6P8Apeb/AKLl/wCh5P8IbJD/wr/B/wAAAAAAAAAAAAAAAAAAAADCv8H/BC/h/wQv3/8FL9z/BS3Z/wYt
++        1v8GLNL/ByvP/wgqy/8IKcb/CSnC/8K/wf8Sjrv/Uszy/0fH8f87w/H/Mb7v/ye67/8et+7/FbPt/w6v
++        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
++</value>
++  </data>
++  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
++    <value>45</value>
++  </metadata>
++</root>
+\ No newline at end of file
+diff --git a/ProjectFiles/MyInitial.csproj b/ProjectFiles/MyInitial.csproj
+new file mode 100644
+index 0000000..985e80e
+--- /dev/null
++++ b/ProjectFiles/MyInitial.csproj
+@@ -0,0 +1,178 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
++  <PropertyGroup>
++    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
++    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
++    <ProductVersion>9.0.30729</ProductVersion>
++    <SchemaVersion>2.0</SchemaVersion>
++    <ProjectGuid>{5587F12A-C3F0-42E6-98B2-0C1ED7E25FB6}</ProjectGuid>
++    <OutputType>WinExe</OutputType>
++    <AppDesignerFolder>Properties</AppDesignerFolder>
++    <RootNamespace>MyNameSpace</RootNamespace>
++    <AssemblyName>MyNameSpace</AssemblyName>
++    <StartupObject>
++    </StartupObject>
++    <FileUpgradeFlags>
++    </FileUpgradeFlags>
++    <OldToolsVersion>3.5</OldToolsVersion>
++    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
++    <UpgradeBackupLocation>
++    </UpgradeBackupLocation>
++    <IsWebBootstrapper>false</IsWebBootstrapper>
++    <PublishUrl>publish\</PublishUrl>
++    <Install>true</Install>
++    <InstallFrom>Disk</InstallFrom>
++    <UpdateEnabled>false</UpdateEnabled>
++    <UpdateMode>Foreground</UpdateMode>
++    <UpdateInterval>7</UpdateInterval>
++    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
++    <UpdatePeriodically>false</UpdatePeriodically>
++    <UpdateRequired>false</UpdateRequired>
++    <MapFileExtensions>true</MapFileExtensions>
++    <ApplicationRevision>0</ApplicationRevision>
++    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
++    <UseApplicationTrust>false</UseApplicationTrust>
++    <PublishWizardCompleted>true</PublishWizardCompleted>
++    <BootstrapperEnabled>true</BootstrapperEnabled>
++    <TargetFrameworkProfile />
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
++    <DebugSymbols>true</DebugSymbols>
++    <DebugType>full</DebugType>
++    <Optimize>false</Optimize>
++    <OutputPath>bin\Debug\</OutputPath>
++    <DefineConstants>DEBUG;TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>0</WarningLevel>
++    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
++    <Prefer32Bit>false</Prefer32Bit>
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
++    <DebugType>pdbonly</DebugType>
++    <Optimize>true</Optimize>
++    <OutputPath>bin\Release\</OutputPath>
++    <DefineConstants>TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>0</WarningLevel>
++    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
++    <Prefer32Bit>false</Prefer32Bit>
++  </PropertyGroup>
++  <PropertyGroup>
++    <ManifestCertificateThumbprint>9FD6FFC9F577EAE63D67CDB331F6E47220BCC6E9</ManifestCertificateThumbprint>
++  </PropertyGroup>
++  <PropertyGroup>
++    <ManifestKeyFile>MyInitial_TemporaryKey.pfx</ManifestKeyFile>
++  </PropertyGroup>
++  <PropertyGroup>
++    <GenerateManifests>true</GenerateManifests>
++  </PropertyGroup>
++  <PropertyGroup>
++    <SignManifests>true</SignManifests>
++  </PropertyGroup>
++  <ItemGroup>
++    <Reference Include="System" />
++    <Reference Include="System.Data" />
++    <Reference Include="System.Deployment" />
++    <Reference Include="System.Drawing" />
++    <Reference Include="System.Windows.Forms" />
++    <Reference Include="System.Xml" />
++  </ItemGroup>
++  <ItemGroup>
++    <Compile Include="AboutBox1.cs">
++      <SubType>Form</SubType>
++    </Compile>
++    <Compile Include="AboutBox1.designer.cs">
++      <DependentUpon>AboutBox1.cs</DependentUpon>
++    </Compile>
++    <Compile Include="JuiceBarForm.cs">
++      <SubType>Form</SubType>
++    </Compile>
++    <Compile Include="JuiceBarForm.designer.cs">
++      <DependentUpon>JuiceBarForm.cs</DependentUpon>
++    </Compile>
++    <Compile Include="Program.cs" />
++    <Compile Include="Properties\AssemblyInfo.cs" />
++    <EmbeddedResource Include="AboutBox1.resx">
++      <DependentUpon>AboutBox1.cs</DependentUpon>
++      <SubType>Designer</SubType>
++    </EmbeddedResource>
++    <EmbeddedResource Include="JuiceBarForm.resx">
++      <DependentUpon>JuiceBarForm.cs</DependentUpon>
++      <SubType>Designer</SubType>
++    </EmbeddedResource>
++    <EmbeddedResource Include="Properties\Resources.resx">
++      <Generator>ResXFileCodeGenerator</Generator>
++      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
++      <SubType>Designer</SubType>
++    </EmbeddedResource>
++    <EmbeddedResource Include="SummaryForm.resx">
++      <DependentUpon>SummaryForm.cs</DependentUpon>
++      <SubType>Designer</SubType>
++    </EmbeddedResource>
++    <Compile Include="Properties\Resources.Designer.cs">
++      <AutoGen>True</AutoGen>
++      <DependentUpon>Resources.resx</DependentUpon>
++      <DesignTime>True</DesignTime>
++    </Compile>
++    <None Include="app.config" />
++    <None Include="MyInitial_TemporaryKey.pfx" />
++    <None Include="Properties\Settings.settings">
++      <Generator>SettingsSingleFileGenerator</Generator>
++      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
++    </None>
++    <Compile Include="Properties\Settings.Designer.cs">
++      <AutoGen>True</AutoGen>
++      <DependentUpon>Settings.settings</DependentUpon>
++      <DesignTimeSharedInput>True</DesignTimeSharedInput>
++    </Compile>
++    <Compile Include="SummaryForm.cs">
++      <SubType>Form</SubType>
++    </Compile>
++    <Compile Include="SummaryForm.designer.cs">
++      <DependentUpon>SummaryForm.cs</DependentUpon>
++    </Compile>
++  </ItemGroup>
++  <ItemGroup>
++    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
++      <Visible>False</Visible>
++      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
++      <Install>false</Install>
++    </BootstrapperPackage>
++    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
++      <Visible>False</Visible>
++      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
++      <Install>false</Install>
++    </BootstrapperPackage>
++    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
++      <Visible>False</Visible>
++      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
++      <Install>false</Install>
++    </BootstrapperPackage>
++    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
++      <Visible>False</Visible>
++      <ProductName>.NET Framework 3.5</ProductName>
++      <Install>false</Install>
++    </BootstrapperPackage>
++    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
++      <Visible>False</Visible>
++      <ProductName>.NET Framework 3.5 SP1</ProductName>
++      <Install>true</Install>
++    </BootstrapperPackage>
++    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
++      <Visible>False</Visible>
++      <ProductName>Windows Installer 3.1</ProductName>
++      <Install>true</Install>
++    </BootstrapperPackage>
++  </ItemGroup>
++  <ItemGroup>
++    <WCFMetadata Include="Service References\" />
++  </ItemGroup>
++  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
++  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
++       Other similar extension points exist, see Microsoft.Common.targets.
++  <Target Name="BeforeBuild">
++  </Target>
++  <Target Name="AfterBuild">
++  </Target>
++  -->
++</Project>
+\ No newline at end of file
+diff --git a/ProjectFiles/MyInitial.sln b/ProjectFiles/MyInitial.sln
+new file mode 100644
+index 0000000..f0f0052
+--- /dev/null
++++ b/ProjectFiles/MyInitial.sln
+@@ -0,0 +1,20 @@
++﻿
++Microsoft Visual Studio Solution File, Format Version 11.00
++# Visual Studio 2010
++Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyInitial", "MyInitial.csproj", "{5587F12A-C3F0-42E6-98B2-0C1ED7E25FB6}"
++EndProject
++Global
++	GlobalSection(SolutionConfigurationPlatforms) = preSolution
++		Debug|Any CPU = Debug|Any CPU
++		Release|Any CPU = Release|Any CPU
++	EndGlobalSection
++	GlobalSection(ProjectConfigurationPlatforms) = postSolution
++		{5587F12A-C3F0-42E6-98B2-0C1ED7E25FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
++		{5587F12A-C3F0-42E6-98B2-0C1ED7E25FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
++		{5587F12A-C3F0-42E6-98B2-0C1ED7E25FB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
++		{5587F12A-C3F0-42E6-98B2-0C1ED7E25FB6}.Release|Any CPU.Build.0 = Release|Any CPU
++	EndGlobalSection
++	GlobalSection(SolutionProperties) = preSolution
++		HideSolutionNode = FALSE
++	EndGlobalSection
++EndGlobal
+diff --git a/ProjectFiles/Program.cs b/ProjectFiles/Program.cs
+new file mode 100644
+index 0000000..6b5931d
+--- /dev/null
++++ b/ProjectFiles/Program.cs
+@@ -0,0 +1,21 @@
++
++using System;
++using System.Collections.Generic;
++using System.Windows.Forms;
++
++namespace MyNameSpace
++{
++    static class Program
++    {
++        /// <summary>
++        /// The main entry point for the application.
++        /// </summary>
++        [STAThread]
++        static void Main()
++        {
++            Application.EnableVisualStyles();
++            Application.SetCompatibleTextRenderingDefault(false);
++            Application.Run(new JuiceBarForm());
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/ProjectFiles/Properties/AssemblyInfo.cs b/ProjectFiles/Properties/AssemblyInfo.cs
+new file mode 100644
+index 0000000..dd2a46d
+--- /dev/null
++++ b/ProjectFiles/Properties/AssemblyInfo.cs
+@@ -0,0 +1,33 @@
++﻿using System.Reflection;
++using System.Runtime.CompilerServices;
++using System.Runtime.InteropServices;
++
++// General Information about an assembly is controlled through the following 
++// set of attributes. Change these attribute values to modify the information
++// associated with an assembly.
++[assembly: AssemblyTitle("Look Sharp Fitness Center")]
++[assembly: AssemblyDescription("")]
++[assembly: AssemblyConfiguration("")]
++[assembly: AssemblyCompany("")]
++[assembly: AssemblyProduct("MyNameSpace")]
++[assembly: AssemblyCopyright("Copyright ©  2009")]
++[assembly: AssemblyTrademark("")]
++[assembly: AssemblyCulture("")]
++
++// Setting ComVisible to false makes the types in this assembly not visible 
++// to COM components.  If you need to access a type in this assembly from 
++// COM, set the ComVisible attribute to true on that type.
++[assembly: ComVisible(false)]
++
++// The following GUID is for the ID of the typelib if this project is exposed to COM
++[assembly: Guid("591c8ecd-7787-4e98-837f-6f0fa4f8f0af")]
++
++// Version information for an assembly consists of the following four values:
++//
++//      Major Version
++//      Minor Version 
++//      Build Number
++//      Revision
++//
++[assembly: AssemblyVersion("1.0.0.0")]
++[assembly: AssemblyFileVersion("1.0.0.0")]
+diff --git a/ProjectFiles/Properties/Resources.Designer.cs b/ProjectFiles/Properties/Resources.Designer.cs
+new file mode 100644
+index 0000000..1b8aa88
+--- /dev/null
++++ b/ProjectFiles/Properties/Resources.Designer.cs
+@@ -0,0 +1,63 @@
++﻿//------------------------------------------------------------------------------
++// <auto-generated>
++//     This code was generated by a tool.
++//     Runtime Version:4.0.30319.42000
++//
++//     Changes to this file may cause incorrect behavior and will be lost if
++//     the code is regenerated.
++// </auto-generated>
++//------------------------------------------------------------------------------
++
++namespace MyNameSpace.Properties {
++    using System;
++    
++    
++    /// <summary>
++    ///   A strongly-typed resource class, for looking up localized strings, etc.
++    /// </summary>
++    // This class was auto-generated by the StronglyTypedResourceBuilder
++    // class via a tool like ResGen or Visual Studio.
++    // To add or remove a member, edit your .ResX file then rerun ResGen
++    // with the /str option, or rebuild your VS project.
++    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
++    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
++    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
++    internal class Resources {
++        
++        private static global::System.Resources.ResourceManager resourceMan;
++        
++        private static global::System.Globalization.CultureInfo resourceCulture;
++        
++        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
++        internal Resources() {
++        }
++        
++        /// <summary>
++        ///   Returns the cached ResourceManager instance used by this class.
++        /// </summary>
++        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
++        internal static global::System.Resources.ResourceManager ResourceManager {
++            get {
++                if (object.ReferenceEquals(resourceMan, null)) {
++                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MyNameSpace.Properties.Resources", typeof(Resources).Assembly);
++                    resourceMan = temp;
++                }
++                return resourceMan;
++            }
++        }
++        
++        /// <summary>
++        ///   Overrides the current thread's CurrentUICulture property for all
++        ///   resource lookups using this strongly typed resource class.
++        /// </summary>
++        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
++        internal static global::System.Globalization.CultureInfo Culture {
++            get {
++                return resourceCulture;
++            }
++            set {
++                resourceCulture = value;
++            }
++        }
++    }
++}
+diff --git a/ProjectFiles/Properties/Resources.resx b/ProjectFiles/Properties/Resources.resx
+new file mode 100644
+index 0000000..af7dbeb
+--- /dev/null
++++ b/ProjectFiles/Properties/Resources.resx
+@@ -0,0 +1,117 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++</root>
+\ No newline at end of file
+diff --git a/ProjectFiles/Properties/Settings.Designer.cs b/ProjectFiles/Properties/Settings.Designer.cs
+new file mode 100644
+index 0000000..10c5c54
+--- /dev/null
++++ b/ProjectFiles/Properties/Settings.Designer.cs
+@@ -0,0 +1,26 @@
++﻿//------------------------------------------------------------------------------
++// <auto-generated>
++//     This code was generated by a tool.
++//     Runtime Version:4.0.30319.42000
++//
++//     Changes to this file may cause incorrect behavior and will be lost if
++//     the code is regenerated.
++// </auto-generated>
++//------------------------------------------------------------------------------
++
++namespace MyNameSpace.Properties {
++    
++    
++    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
++    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
++    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
++        
++        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
++        
++        public static Settings Default {
++            get {
++                return defaultInstance;
++            }
++        }
++    }
++}
+diff --git a/ProjectFiles/Properties/Settings.settings b/ProjectFiles/Properties/Settings.settings
+new file mode 100644
+index 0000000..3964565
+--- /dev/null
++++ b/ProjectFiles/Properties/Settings.settings
+@@ -0,0 +1,7 @@
++﻿<?xml version='1.0' encoding='utf-8'?>
++<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
++  <Profiles>
++    <Profile Name="(Default)" />
++  </Profiles>
++  <Settings />
++</SettingsFile>
+diff --git a/ProjectFiles/SummaryForm.cs b/ProjectFiles/SummaryForm.cs
+new file mode 100644
+index 0000000..319c74c
+--- /dev/null
++++ b/ProjectFiles/SummaryForm.cs
+@@ -0,0 +1,62 @@
++
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Data;
++using System.Drawing;
++using System.Text;
++using System.Windows.Forms;
++
++namespace MyNameSpace
++{
++    public partial class SummaryForm : Form
++    {
++        decimal totalSalesDecimal;
++        int numberOrdersInteger, drinksSoldInteger;
++
++        public decimal TotalSales
++        {
++            set
++            {
++                totalSalesDecimal = value;
++            }
++        }
++
++        public int NumberOrders
++        {
++            set
++            {
++                numberOrdersInteger = value;
++            }
++        }
++
++        public int DrinksSold
++        {
++            set
++            {
++                drinksSoldInteger = value;
++            }
++        }
++
++        public SummaryForm()
++        {
++            InitializeComponent();
++        }
++
++        private void okButton_Click(object sender, EventArgs e)
++        {
++            // Close the summary form.
++
++            this.Close();
++        }
++
++        private void SummaryForm_Activated(object sender, EventArgs e)
++        {
++            // Get and display the summary data.
++
++            drinksSoldTextBox.Text = drinksSoldInteger.ToString();
++            numberOrdersTextBox.Text = numberOrdersInteger.ToString();
++            totalSalesTextBox.Text = totalSalesDecimal.ToString("C");
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/ProjectFiles/SummaryForm.designer.cs b/ProjectFiles/SummaryForm.designer.cs
+new file mode 100644
+index 0000000..44c7143
+--- /dev/null
++++ b/ProjectFiles/SummaryForm.designer.cs
+@@ -0,0 +1,140 @@
++namespace MyNameSpace
++{
++    partial class SummaryForm
++    {
++        /// <summary>
++        /// Required designer variable.
++        /// </summary>
++        private System.ComponentModel.IContainer components = null;
++
++        /// <summary>
++        /// Clean up any resources being used.
++        /// </summary>
++        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
++        protected override void Dispose(bool disposing)
++        {
++            if (disposing && (components != null))
++            {
++                components.Dispose();
++            }
++            base.Dispose(disposing);
++        }
++
++        #region Windows Form Designer generated code
++
++        /// <summary>
++        /// Required method for Designer support - do not modify
++        /// the contents of this method with the code editor.
++        /// </summary>
++        private void InitializeComponent()
++        {
++            this.okButton = new System.Windows.Forms.Button();
++            this.label1 = new System.Windows.Forms.Label();
++            this.label2 = new System.Windows.Forms.Label();
++            this.label3 = new System.Windows.Forms.Label();
++            this.drinksSoldTextBox = new System.Windows.Forms.TextBox();
++            this.numberOrdersTextBox = new System.Windows.Forms.TextBox();
++            this.totalSalesTextBox = new System.Windows.Forms.TextBox();
++            this.SuspendLayout();
++            // 
++            // okButton
++            // 
++            this.okButton.Location = new System.Drawing.Point(228, 192);
++            this.okButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.okButton.Name = "okButton";
++            this.okButton.Size = new System.Drawing.Size(100, 28);
++            this.okButton.TabIndex = 0;
++            this.okButton.Text = "&OK";
++            this.okButton.UseVisualStyleBackColor = true;
++            this.okButton.Click += new System.EventHandler(this.okButton_Click);
++            // 
++            // label1
++            // 
++            this.label1.AutoSize = true;
++            this.label1.Location = new System.Drawing.Point(68, 58);
++            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.label1.Name = "label1";
++            this.label1.Size = new System.Drawing.Size(80, 17);
++            this.label1.TabIndex = 1;
++            this.label1.Text = "Drinks Sold";
++            // 
++            // label2
++            // 
++            this.label2.AutoSize = true;
++            this.label2.Location = new System.Drawing.Point(68, 90);
++            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.label2.Name = "label2";
++            this.label2.Size = new System.Drawing.Size(122, 17);
++            this.label2.TabIndex = 2;
++            this.label2.Text = "Number of Orders";
++            // 
++            // label3
++            // 
++            this.label3.AutoSize = true;
++            this.label3.Location = new System.Drawing.Point(68, 122);
++            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.label3.Name = "label3";
++            this.label3.Size = new System.Drawing.Size(79, 17);
++            this.label3.TabIndex = 3;
++            this.label3.Text = "Total Sales";
++            // 
++            // drinksSoldTextBox
++            // 
++            this.drinksSoldTextBox.Location = new System.Drawing.Point(208, 54);
++            this.drinksSoldTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.drinksSoldTextBox.Name = "drinksSoldTextBox";
++            this.drinksSoldTextBox.ReadOnly = true;
++            this.drinksSoldTextBox.Size = new System.Drawing.Size(132, 22);
++            this.drinksSoldTextBox.TabIndex = 4;
++            // 
++            // numberOrdersTextBox
++            // 
++            this.numberOrdersTextBox.Location = new System.Drawing.Point(208, 86);
++            this.numberOrdersTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.numberOrdersTextBox.Name = "numberOrdersTextBox";
++            this.numberOrdersTextBox.ReadOnly = true;
++            this.numberOrdersTextBox.Size = new System.Drawing.Size(132, 22);
++            this.numberOrdersTextBox.TabIndex = 5;
++            // 
++            // totalSalesTextBox
++            // 
++            this.totalSalesTextBox.Location = new System.Drawing.Point(208, 118);
++            this.totalSalesTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.totalSalesTextBox.Name = "totalSalesTextBox";
++            this.totalSalesTextBox.ReadOnly = true;
++            this.totalSalesTextBox.Size = new System.Drawing.Size(132, 22);
++            this.totalSalesTextBox.TabIndex = 6;
++            // 
++            // SummaryForm
++            // 
++            this.AcceptButton = this.okButton;
++            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
++            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
++            this.ClientSize = new System.Drawing.Size(369, 273);
++            this.Controls.Add(this.totalSalesTextBox);
++            this.Controls.Add(this.numberOrdersTextBox);
++            this.Controls.Add(this.drinksSoldTextBox);
++            this.Controls.Add(this.label3);
++            this.Controls.Add(this.label2);
++            this.Controls.Add(this.label1);
++            this.Controls.Add(this.okButton);
++            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
++            this.Name = "SummaryForm";
++            this.Text = "Juice Bar Sales Summary";
++            this.Activated += new System.EventHandler(this.SummaryForm_Activated);
++            this.ResumeLayout(false);
++            this.PerformLayout();
++
++        }
++
++        #endregion
++
++        private System.Windows.Forms.Button okButton;
++        private System.Windows.Forms.Label label1;
++        private System.Windows.Forms.Label label2;
++        private System.Windows.Forms.Label label3;
++        private System.Windows.Forms.TextBox numberOrdersTextBox;
++        private System.Windows.Forms.TextBox totalSalesTextBox;
++        internal System.Windows.Forms.TextBox drinksSoldTextBox;
++    }
++}
+\ No newline at end of file
+diff --git a/ProjectFiles/SummaryForm.resx b/ProjectFiles/SummaryForm.resx
+new file mode 100644
+index 0000000..19dc0dd
+--- /dev/null
++++ b/ProjectFiles/SummaryForm.resx
+@@ -0,0 +1,120 @@
++<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" use="required" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++</root>
+\ No newline at end of file
+diff --git a/ProjectFiles/app.config b/ProjectFiles/app.config
+new file mode 100644
+index 0000000..c5e1dae
+--- /dev/null
++++ b/ProjectFiles/app.config
+@@ -0,0 +1,3 @@
++<?xml version="1.0"?>
++<configuration>
++<startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5"/></startup></configuration>
+-- 
+2.11.0.windows.1
+

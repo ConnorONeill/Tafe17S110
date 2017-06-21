@@ -1,0 +1,40 @@
+From c540456436e829d553202df1655dfb2d0eec157d Mon Sep 17 00:00:00 2001
+From: Takuma Wood-Cooper <Takuma.Wood-Cooper@outlook.com>
+Date: Tue, 20 Jun 2017 15:09:36 +0930
+Subject: [PATCH 05/17] Begin work on the feat_term feature.
+
+Work done by Takuma Wood-Cooper.
+---
+ Student Files/VendorMaintenance/VendorMaintenance.csproj | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/Student Files/VendorMaintenance/VendorMaintenance.csproj b/Student Files/VendorMaintenance/VendorMaintenance.csproj
+index f9d7590..6d60567 100644
+--- a/Student Files/VendorMaintenance/VendorMaintenance.csproj	
++++ b/Student Files/VendorMaintenance/VendorMaintenance.csproj	
+@@ -61,6 +61,12 @@
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="DataContext.cs" />
++    <Compile Include="frmAddModifyTerm.cs">
++      <SubType>Form</SubType>
++    </Compile>
++    <Compile Include="frmAddModifyTerm.Designer.cs">
++      <DependentUpon>frmAddModifyTerm.cs</DependentUpon>
++    </Compile>
+     <Compile Include="frmAddModifyVendor.cs">
+       <SubType>Form</SubType>
+     </Compile>
+@@ -86,6 +92,9 @@
+     <None Include="Payables.dbml.layout">
+       <DependentUpon>Payables.dbml</DependentUpon>
+     </None>
++    <EmbeddedResource Include="frmAddModifyTerm.resx">
++      <DependentUpon>frmAddModifyTerm.cs</DependentUpon>
++    </EmbeddedResource>
+     <EmbeddedResource Include="Properties\Resources.resx">
+       <Generator>ResXFileCodeGenerator</Generator>
+       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+-- 
+2.11.0.windows.1
+

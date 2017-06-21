@@ -1,0 +1,46 @@
+From 88096d27c7eb8f36fabb394c0caa5632d8100a97 Mon Sep 17 00:00:00 2001
+From: Connor <iconnoroneill@gmail.com>
+Date: Wed, 21 Jun 2017 15:11:44 +0930
+Subject: [PATCH 17/17] Update modify button
+
+Signed-off-by: Connor <iconnoroneill@gmail.com>
+---
+ Student Files/VendorMaintenance/frmState.Designer.cs | 1 +
+ Student Files/VendorMaintenance/frmState.cs          | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/Student Files/VendorMaintenance/frmState.Designer.cs b/Student Files/VendorMaintenance/frmState.Designer.cs
+index 55633c0..f60a2ea 100644
+--- a/Student Files/VendorMaintenance/frmState.Designer.cs	
++++ b/Student Files/VendorMaintenance/frmState.Designer.cs	
+@@ -118,6 +118,7 @@
+             // 
+             // btnModify
+             // 
++            this.btnModify.Enabled = false;
+             this.btnModify.Location = new System.Drawing.Point(112, 162);
+             this.btnModify.Name = "btnModify";
+             this.btnModify.Size = new System.Drawing.Size(75, 23);
+diff --git a/Student Files/VendorMaintenance/frmState.cs b/Student Files/VendorMaintenance/frmState.cs
+index ae03976..6b7260f 100644
+--- a/Student Files/VendorMaintenance/frmState.cs	
++++ b/Student Files/VendorMaintenance/frmState.cs	
+@@ -30,6 +30,7 @@ namespace VendorMaintenance
+             txtName.Text = "";
+             txtFirstZip.Text = "";
+             txtLastZip.Text = "";
++            btnModify.Enabled = false;
+         }
+ 
+         // Codes for the add button which is to display the frmAddModifyGLAccount form
+@@ -86,6 +87,7 @@ namespace VendorMaintenance
+                      where state.StateCode == txtCode.Text
+                      select state).Single();
+                 this.DisplayState();
++                btnModify.Enabled = true;
+             }
+             catch (InvalidOperationException)
+             {
+-- 
+2.11.0.windows.1
+
