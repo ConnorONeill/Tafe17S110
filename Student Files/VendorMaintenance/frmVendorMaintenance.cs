@@ -151,5 +151,12 @@ namespace VendorMaintenance
                 this.DisplayVendor();
             }*/
         }
+
+        private void btnViewStates_Click(object sender, EventArgs e)
+        {
+            frmState f = new frmState();
+            this.Hide();
+            f.ShowDialog();
+        }
     }
 }

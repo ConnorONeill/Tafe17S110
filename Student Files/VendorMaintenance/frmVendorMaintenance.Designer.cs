@@ -242,6 +242,7 @@
             this.btnViewStates.TabIndex = 52;
             this.btnViewStates.Text = "View States";
             this.btnViewStates.UseVisualStyleBackColor = true;
+            this.btnViewStates.Click += new System.EventHandler(this.btnViewStates_Click);
             // 
             // frmVendorMaintenance
             // 

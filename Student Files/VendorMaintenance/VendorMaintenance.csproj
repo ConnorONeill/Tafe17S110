@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="frmAddModifyState.Designer.cs">
       <DependentUpon>frmAddModifyState.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmAddModifyTerm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,6 +84,7 @@
     </Compile>
     <Compile Include="frmState.Designer.cs">
       <DependentUpon>frmState.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmTerm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,13 +113,11 @@
     <EmbeddedResource Include="frmAddModifyState.resx">
       <DependentUpon>frmAddModifyState.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmAddModifyVendor.resx">
-      <DependentUpon>frmAddModifyVendor.cs</DependentUpon>
+    <EmbeddedResource Include="frmAddModifyTerm.resx">
+      <DependentUpon>frmAddModifyTerm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmState.resx">
       <DependentUpon>frmState.cs</DependentUpon>
-    <EmbeddedResource Include="frmAddModifyTerm.resx">
-      <DependentUpon>frmAddModifyTerm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmTerm.resx">
       <DependentUpon>frmTerm.cs</DependentUpon>

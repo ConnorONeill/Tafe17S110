@@ -124,7 +124,7 @@
             this.btnModify.TabIndex = 9;
             this.btnModify.Text = "Modify";
             this.btnModify.UseVisualStyleBackColor = true;
-       
+            this.btnModify.Click += new System.EventHandler(this.btnModify_Click);
             // 
             // btnGetState
             // 
@@ -134,6 +134,7 @@
             this.btnGetState.TabIndex = 10;
             this.btnGetState.Text = "Get State";
             this.btnGetState.UseVisualStyleBackColor = true;
+            this.btnGetState.Click += new System.EventHandler(this.btnGetState_Click);
             // 
             // btnClear
             // 
@@ -143,6 +144,7 @@
             this.btnClear.TabIndex = 11;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // frmState
             // 

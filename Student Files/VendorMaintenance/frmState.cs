@@ -107,7 +107,7 @@ namespace VendorMaintenance
             txtCode.Text = selectedState.StateCode.ToString();
             txtName.Text = selectedState.StateName.ToString();
             txtFirstZip.Text = selectedState.FirstZipCode.ToString();
-            txtFirstZip.Text = selectedState.FirstZipCode.ToString();
+            txtLastZip.Text = selectedState.LastZipCode.ToString();
             //cmdModify.Enabled = true;
             //cmdDelete.Enabled = true;
         }
@@ -122,6 +122,8 @@ namespace VendorMaintenance
             //cmdModify.Enabled = false;
             //cmdDelete.Enabled = false;
         }
+
+       
 
 
     }
