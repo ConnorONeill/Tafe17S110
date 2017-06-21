@@ -134,5 +134,22 @@ namespace VendorMaintenance
         {
             this.Close();
         }
+
+        private void btnViewTerms_Click(object sender, EventArgs e)
+        {
+            frmTerm f = new frmTerm();
+            this.Hide();
+            f.ShowDialog();
+            
+            /*frmAddModifyVendor addModifyVendorForm = new frmAddModifyVendor();
+            addModifyVendorForm.addVendor = true;
+            DialogResult result = addModifyVendorForm.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                selectedVendor = addModifyVendorForm.vendor;
+                txtVendorID.Text = selectedVendor.VendorID.ToString();
+                this.DisplayVendor();
+            }*/
+        }
     }
 }
