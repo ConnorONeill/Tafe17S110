@@ -30,6 +30,7 @@ namespace VendorMaintenance
             txtName.Text = "";
             txtFirstZip.Text = "";
             txtLastZip.Text = "";
+            btnModify.Enabled = false;
         }
 
         // Codes for the add button which is to display the frmAddModifyGLAccount form
@@ -86,6 +87,7 @@ namespace VendorMaintenance
                      where state.StateCode == txtCode.Text
                      select state).Single();
                 this.DisplayState();
+                btnModify.Enabled = true;
             }
             catch (InvalidOperationException)
             {

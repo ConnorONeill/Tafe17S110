@@ -118,6 +118,7 @@
             // 
             // btnModify
             // 
+            this.btnModify.Enabled = false;
             this.btnModify.Location = new System.Drawing.Point(112, 162);
             this.btnModify.Name = "btnModify";
             this.btnModify.Size = new System.Drawing.Size(75, 23);
